@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema(
     {
-        usename: {
+        username: {
             type: String,
             required: true,
             unique: true,
@@ -15,17 +15,12 @@ const userSchema = mongoose.Schema(
         password: {
             type: String,
             required: true,
-            unique: true,
         },
     },
     {
-        timestamps: true
+        timestamps: true,
     }
 );
+
 const User = mongoose.model('User', userSchema);
-app.get('/', (req, res) => {
-    res.json({ message: 'Hello world !123' })
-
-})
 export default User;
-
