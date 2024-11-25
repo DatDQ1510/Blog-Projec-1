@@ -6,16 +6,21 @@ dotenv.config();
 
 // Import routes
 import userRoutes from "./routes/user.routes.js";
-// import authRoutes from "./routes/auth.routes.js";
-
-const ConnectMongoose = mongoose.connect(process.env.MONGO)
+import authRoutes from "./routes/auth.routes.js";
+const MONGO = process.env.MONGO;
+const ConnectMongoose = mongoose.connect(MONGO);
 ConnectMongoose.then(() => console.log("MongoDB is connected")).catch(err => console.error('error connect'))
 const app = express();
+
+app.use(express.json());
 
 // Sử dụng routes
 app.use("/api/users", userRoutes);
 
-// app.use("/api/auth", authRoutes);
-app.listen(3000, () => {
+app.use("/api/auth", authRoutes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
     console.log(`Server is runing on Port 3000`);
+    // console.log(MONGO);
 })
