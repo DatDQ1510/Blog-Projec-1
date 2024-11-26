@@ -24,3 +24,15 @@ app.listen(PORT, () => {
     console.log(`Server is runing on Port 3000`);
     // console.log(MONGO);
 })
+
+app.use((err, req, res, next) => {
+    const statusCode = res.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(statusCode).json(
+        {
+            success: false,
+            statusCode,
+            message
+        }
+    )
+})
