@@ -5,7 +5,8 @@ import DashBoard from "./pages/DashBoard";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
-
+// import { Footer } from "flowbite-react";
+import Footer from "./components/Footer";
 export default function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/dashboard" element={<DashBoard />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }   
