@@ -2,11 +2,12 @@ import bcryptjs from 'bcryptjs';
 import User from '../models/user.model.js';
 import { errorHandle } from '../utils/error.js';
 export const signup = async (req, res, next) => {
+    
     const { username, email, password } = req.body;
-
+    
     // Kiểm tra dữ liệu đầu vào
     if (!username || !email || !password || username === '' || email === '' || password === '') {
-        next(errorHandle(400, "All fields are required"));
+        return next(errorHandle(400, "All fields are required"));
     }
 
     if (typeof password !== 'string') {
