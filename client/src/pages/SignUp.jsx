@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, TextInput, Label, Alert, Spinner } from 'flowbite-react';
-
+import { AuthContext } from '../AuthContext';
+import { useContext } from 'react';
 export default function SignUp() {
+
     const [formData, setFormData] = React.useState({ username: '', email: '', password: '' });
     const [errorMessages, setErrorMessages] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
@@ -125,7 +127,7 @@ export default function SignUp() {
                         </Link>
                     </div>
                     {errorMessages && (
-                        <Alert className="mt-5" color="failure">
+                        <Alert className="mt-5" color={errorMessages.includes('successful') ? 'success' : 'failure'}>
                             {errorMessages}
                         </Alert>
                     )}

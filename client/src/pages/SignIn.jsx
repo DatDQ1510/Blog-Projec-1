@@ -2,11 +2,14 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, TextInput, Label, Alert, Spinner } from 'flowbite-react';
 import { set } from 'mongoose';
-
+import { AuthContext } from '../AuthContext';
+import { useContext } from 'react';
 export default function SignUp() {
+    const { setIsLoggedIn, setUserInfo } = useContext(AuthContext);
     const [formData, setFormData] = React.useState({});
     const [errorMessages, setErrorMessages] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+
     const navigate = useNavigate();
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -39,6 +42,8 @@ export default function SignUp() {
             }
             setLoading(false);
             if (res.ok) {
+                setUserInfo(data.user); // Giả sử API trả về thông tin người dùng
+                setIsLoggedIn(true);
                 navigate('/');
             }
         } catch (err) {
@@ -88,7 +93,14 @@ export default function SignUp() {
                             />
                         </div>
                         <Button gradientDuoTone="purpleToPink" type="submit" className="w-full" disabled={loading}>
-                            Sign In
+                            {
+                                loading ? (
+                                    <>
+                                        <Spinner aria-label="Loading" />
+                                        <span> Loading ... </span>
+                                    </>
+                                ) : 'Sign In'
+                            }
                         </Button>
                     </form>
                     <div className="text-center mt-4">
@@ -97,14 +109,7 @@ export default function SignUp() {
                             to="/sign-up"
                             className="font-semibold text-purple-500 hover:underline hover:text-purple-700"
                         >
-                            {
-                                loading ? (
-                                    <>
-                                        <Spinner aria-label="Loading" size='sm ' />
-                                        <span> Loading ... </span>
-                                    </>
-                                ) : 'Sign Up'
-                            }
+                            Sign Up
                         </Link>
                     </div>
                     {
