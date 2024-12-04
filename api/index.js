@@ -8,7 +8,7 @@ dotenv.config();
 // Import routes
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
-
+import postRoutes from "./routes/post.routes.js";
 
 const corsOptions = {
     origin: 'http://localhost:5173',  // URL của frontend
@@ -24,9 +24,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 // Sử dụng routes
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/post", postRoutes);
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

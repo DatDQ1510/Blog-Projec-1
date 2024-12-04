@@ -58,7 +58,7 @@ export const signin = async (req, res, next) => {
         const token = jwt.sign(
             { id: validUser._id, email: validUser.email, username: validUser.username, isAdmin: validUser.isAdmin },
             process.env.JWT_SECRET,
-            { expiresIn: "30s" }
+            { expiresIn: "5m" }
         );
 
         // Loại bỏ password khỏi kết quả trả về
