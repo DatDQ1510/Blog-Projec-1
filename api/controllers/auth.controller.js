@@ -56,9 +56,9 @@ export const signin = async (req, res, next) => {
 
         // Tạo token JWT
         const token = jwt.sign(
-            { id: validUser._id, email: validUser.email, username: validUser.username },
+            { id: validUser._id, email: validUser.email, username: validUser.username, isAdmin: validUser.isAdmin },
             process.env.JWT_SECRET,
-            { expiresIn: "30s" } // Token có hiệu lực trong 1 giờ
+            { expiresIn: "30s" }
         );
 
         // Loại bỏ password khỏi kết quả trả về

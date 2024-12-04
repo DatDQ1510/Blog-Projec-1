@@ -1,47 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useContext } from 'react';
+import { AuthContext } from '../AuthContext';
 
 export default function Home() {
-    const [user, setUser] = useState(null); // Trạng thái người dùng
-    const [loading, setLoading] = useState(true); // Trạng thái tải dữ liệu
+    const { loading, userInfo, isLoggedIn } = useContext(AuthContext);
 
-    useEffect(() => {
-        const checkLoginStatus = async () => {
-            try {
-                // Gửi yêu cầu kiểm tra trạng thái đăng nhập
-                const response = await fetch('http://localhost:3000/api/auth/check-auth', {
-                    method: 'GET',
-                    credentials: 'include', // Gửi cookie trong yêu cầu
-                });
+    if (loading) {
+        return <div>Loading...</div>; // Không hiển thị nội dung khi đang tải
+    }
 
-                if (response.ok) {
-                    const data = await response.json(); // Lấy dữ liệu từ server
-                    setUser(data); // Lưu thông tin người dùng
-                } else {
-                    // Nếu xác thực thất bại
-                    const error = await response.json();
-                    console.log('Authentication failed:', error.message);
-                    setUser(null); // Không có người dùng
-                }
-            } catch (error) {
-                console.error('Error checking login status:', error); // Lỗi bất ngờ
-                setUser(null);
-            } finally {
-                setLoading(false); // Hoàn tất tải
-            }
-        };
-
-        checkLoginStatus(); // Gọi hàm kiểm tra
-    }, []); // Chỉ chạy khi component được mount
+    if (!isLoggedIn || !userInfo) {
+        return <h1>Please log in.</h1>; // Hiển thị thông báo nếu chưa đăng nhập
+    }
 
     return (
-        <div>
-            {loading ? (
-                <h1>Loading...</h1> // Hiển thị khi đang kiểm tra
-            ) : user ? (
-                <h1>Welcome, {user.email}!</h1> // Hiển thị khi đăng nhập thành công
-            ) : (
-                <h1>Please log in.</h1> // Hiển thị khi chưa đăng nhập
-            )}
-        </div>
+        <>
+            <h1>Welcome, {userInfo.username}!</h1>
+            <h2>Your email: {userInfo.email}</h2>
+            <h3>Your role: {userInfo.isAdmin ? 'Admin' : 'User'}</h3>
+        </>
     );
 }

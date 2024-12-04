@@ -8,7 +8,7 @@ import { useContext } from 'react';
 import { useState } from 'react'; // Import the useState hook  
 
 export default function Header() {
-  const { isLoggedIn, userInfo, setIsLoggedIn, setUserInfo } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, setUserInfo } = useContext(AuthContext);
   const [darkMode, setDarkMode] = useState(true);
 
   const toggleDarkMode = () => {
@@ -20,10 +20,25 @@ export default function Header() {
     }
   };
   const handleSignout = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/auth/signout', {
+        method: 'POST',
+        credentials: 'include', // Đảm bảo gửi cookie trong yêu cầu
+      });
 
-    setIsLoggedIn(false);
-    setUserInfo(null);
-  }
+      if (response.ok) {
+
+        setIsLoggedIn(false); // Cập nhật trạng thái đăng nhập
+        setUserInfo(null);    // Xóa thông tin người dùng
+        window.location.href = '/';
+      } else {
+        const error = await response.json();
+        console.error('Failed to log out:', error.message);
+      }
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
+  };
   return (
     <Flowbite>
       <Navbar className="border-b-2">
@@ -96,7 +111,7 @@ export default function Header() {
         {/* Navbar Collapse (Links) */}
         <Navbar.Collapse>
           <Navbar.Link>
-            <Link to="/home">Home</Link>
+            <Link to="/">Home</Link>
           </Navbar.Link>
           <Navbar.Link>
             <Link to="/about">About</Link>

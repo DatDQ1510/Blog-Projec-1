@@ -5,7 +5,7 @@ export default function AppFooter() {
     return (
         <Footer container={true} className="bg-gradient-to-r from-pink-300 via-pink-500 to-pink-700 text-white">
             <div className="w-full text-center p-6">
-                <p className="text-lg font-semibold mb-4">✨ Follow us for more fun! ✨</p>
+                <p className="text-lg font-semibold mb-4">✨ Follow me for more fun! ✨</p>
                 <div className="flex justify-center space-x-8 my-4">
                     <a
                         href="https://www.youtube.com"
