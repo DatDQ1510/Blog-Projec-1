@@ -20,10 +20,7 @@ const userSchema = mongoose.Schema(
             type: Boolean,
             default: false,
         },
-        refreshToken: {
-            type: String,
-            default: '',
-        },
+
     },
     {
         timestamps: true,
