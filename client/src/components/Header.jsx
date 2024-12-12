@@ -1,35 +1,50 @@
-import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { FaMoon, FaSun } from 'react-icons/fa';
-import { DarkThemeToggle, Flowbite } from "flowbite-react";
+import { Navbar, Dropdown, Avatar, Button, TextInput } from 'flowbite-react';
+import { AiOutlineSearch, AiOutlineMoon, AiOutlineSun } from 'react-icons/ai';
 import { AuthContext } from '../AuthContext';
-import { useContext } from 'react';
-import { useState } from 'react'; // Import the useState hook  
 
 export default function Header() {
   const { isLoggedIn, setIsLoggedIn, setUserInfo } = useContext(AuthContext);
-  const [darkMode, setDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // Toggle dark mode
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (darkMode) {
-      document.documentElement.classList.remove('dark'); // Disable dark mode
+    setIsDarkMode(!isDarkMode);
+    if (!isDarkMode) {
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.add('dark'); // Enable dark mode
+      document.documentElement.classList.remove('dark');
     }
+    localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
   };
+
+  // Load theme from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      // Đảm bảo chế độ sáng mặc định
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light'); // Lưu mặc định là light
+    }
+  }, []);
+
+
   const handleSignout = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/auth/signout', {
         method: 'POST',
-        credentials: 'include', // Đảm bảo gửi cookie trong yêu cầu
+        credentials: 'include',
       });
 
       if (response.ok) {
-
-        setIsLoggedIn(false); // Cập nhật trạng thái đăng nhập
-        setUserInfo(null);    // Xóa thông tin người dùng
+        setIsLoggedIn(false);
+        setUserInfo(null);
         window.location.href = '/';
       } else {
         const error = await response.json();
@@ -39,85 +54,83 @@ export default function Header() {
       console.error('Error during sign out:', error);
     }
   };
+
   return (
-    <Flowbite>
-      <Navbar className="border-b-2">
-        {/* Logo */}
-        <Link
-          to="/"
-          className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
+    <Navbar className="border-b-2">
+      {/* Logo */}
+      <Link
+        to="/"
+        className="self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white"
+      >
+        <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
+          Dat's
+        </span>
+        Blog
+      </Link>
+
+      {/* Search Bar */}
+      <form>
+        <TextInput
+          type="text"
+          placeholder="Search..."
+          rightIcon={AiOutlineSearch}
+          className="hidden lg:inline"
+        />
+      </form>
+
+      {/* Mobile Search Button */}
+      <Button className="w-12 h-10 lg:hidden" color="gray" pill>
+        <AiOutlineSearch />
+      </Button>
+
+      {/* Right-Side Actions */}
+      <div className="flex gap-2 md:order-2">
+        {/* Theme Toggle Button */}
+        <Button
+          onClick={toggleDarkMode}
+          gradientDuoTone="purpleToBlue"
+          pill
         >
-          <span className="px-2 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg text-white">
-            Dat's
-          </span>
-          Blog
-        </Link>
-
-        {/* Search Bar */}
-        <form>
-          <TextInput
-            type="text"
-            placeholder="Search..."
-            rightIcon={AiOutlineSearch}
-            className="hidden lg:inline"
-          />
-        </form>
-
-        {/* Mobile Search Button */}
-        <Button className="w-12 h-10 lg:hidden" color="gray" pill>
-          <AiOutlineSearch />
+          {isDarkMode ? <AiOutlineSun /> : <AiOutlineMoon />}
         </Button>
 
-        {/* Right-Side Actions */}
-        <div className="flex gap-2 md:order-2">
-          {/* Theme Toggle Button */}
-          <Button className="w-12 h-10 hidden sm:inline" color="gray" pill onClick={toggleDarkMode}>
-            {darkMode ? <FaSun /> : <FaMoon />}
-          </Button>
-          {isLoggedIn ? (
-            <Dropdown
-              label={<Avatar rounded />}
-              inline // Để Dropdown xuất hiện ngay dưới Avatar
-            >
-              <Dropdown.Item>
-                <Link to="/profile">Profile</Link>
-              </Dropdown.Item>
-              <Dropdown.Item >
-                <Link to='/' onClick={handleSignout}>Sign out</Link>
-              </Dropdown.Item>
-            </Dropdown>
-
-          ) : (
-            <>
-              {/* Sign-Up Button */}
-              <Link to="/sign-up">
-                <Button gradientDuoTone="purpleToBlue" outline>
-                  Sign Up
-                </Button>
+        {isLoggedIn ? (
+          <Dropdown label={<Avatar rounded />} inline>
+            <Dropdown.Item>
+              <Link to="/profile">Profile</Link>
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Link to="/" onClick={handleSignout}>
+                Sign out
               </Link>
+            </Dropdown.Item>
+          </Dropdown>
+        ) : (
+          <>
+            <Link to="/sign-up">
+              <Button gradientDuoTone="purpleToBlue" outline>
+                Sign Up
+              </Button>
+            </Link>
+            <Link to="/sign-in">
+              <Button gradientDuoTone="purpleToBlue" outline>
+                Sign In
+              </Button>
+            </Link>
+          </>
+        )}
+        <Navbar.Toggle />
+      </div>
 
-              {/* Sign-In Button */}
-              <Link to="/sign-in">
-                <Button gradientDuoTone="purpleToBlue" outline>
-                  Sign In
-                </Button>
-              </Link>
-            </>
-          )}
-          {/* Navbar Toggle for Mobile */}
-          <Navbar.Toggle />
-        </div>
-
-        {/* Navbar Collapse (Links) */}
-        <Navbar.Collapse>
-          <Navbar.Link>
-            <Link to="/">Home</Link>
-          </Navbar.Link>
-          <Navbar.Link>
-            <Link to="/about">About</Link>
-          </Navbar.Link>
-        </Navbar.Collapse>
-      </Navbar>
-    </Flowbite>
+      {/* Navbar Collapse (Links) */}
+      <Navbar.Collapse>
+        <Navbar.Link>
+          <Link to="/">Home</Link>
+        </Navbar.Link>
+        <Navbar.Link>
+          <Link to="/about">About</Link>
+        </Navbar.Link>
+      </Navbar.Collapse>
+    </Navbar>
   );
 }

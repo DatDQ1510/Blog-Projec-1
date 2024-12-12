@@ -7,10 +7,10 @@ import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
 import Profile from "./pages/Profile";
 import Footer from "./components/Footer";
+import CreatePost from "./pages/CreatePost";
+import ChangePassword from "./pages/ChangePassword";
 import { AuthContext } from './AuthContext';
 import { useContext, useEffect } from 'react';
-import CreatePost from "./pages/CreatePost";
-
 export default function App() {
   const { setIsLoggedIn, setUserInfo, setLoading } = useContext(AuthContext);
 
@@ -62,7 +62,8 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/dashboard" element={<DashBoard />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path='/createpost' element={<CreatePost />} />
+        <Route path='/create-post' element={<CreatePost />} />
+        <Route path='/change-password' element={<ChangePassword />} />
       </Routes>
       <Footer />
     </BrowserRouter>

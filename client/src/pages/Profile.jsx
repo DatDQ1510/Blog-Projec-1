@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TextInput, Label, Button } from 'flowbite-react';
 import { AuthContext } from '../AuthContext';
-import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+
 export default function Profile() {
     const { userInfo } = useContext(AuthContext);
+
+    // Kiểm tra nếu userInfo chưa có hoặc không hợp lệ
+    if (!userInfo) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                    <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
+                        User Profile
+                    </h2>
+                    <p className="text-red-500 text-center">Unable to load user information. Please try again later.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -18,8 +32,9 @@ export default function Profile() {
                         id="name"
                         placeholder="Name"
                         type="text"
-                        defaultValue={userInfo.username}
+                        defaultValue={userInfo.username || 'No username available'}
                         className="mt-1"
+                        readOnly
                     />
                 </div>
                 <div className="mb-4">
@@ -28,24 +43,17 @@ export default function Profile() {
                         id="email"
                         placeholder="email"
                         type="email"
-                        defaultValue={userInfo.email}
+                        defaultValue={userInfo.email || 'No email available'}
                         className="mt-1"
+                        readOnly
                     />
                 </div>
-                <div className="mb-6">
-                    <Label htmlFor="password">Password</Label>
-                    <TextInput
-                        id="password"
-                        placeholder="password"
-                        type="password"
-                        className="mt-1"
-                    />
-                </div>
+
                 <Button type="submit" className="w-full mb-7" gradientDuoTone='purpleToBlue' >
-                    Save Changes
+                    <Link to='/change-password'> Change Password</Link>
                 </Button>
                 <Button type='submit' gradientDuoTone='purpleToPink' className="w-full" outline>
-                    <Link to='/createpost' >Create Post</Link>
+                    <Link to='/create-post' >Create Post</Link>
                 </Button>
             </form>
         </div>

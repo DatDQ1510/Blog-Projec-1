@@ -58,7 +58,7 @@ export const signin = async (req, res, next) => {
         const token = jwt.sign(
             { id: validUser._id, email: validUser.email, username: validUser.username, isAdmin: validUser.isAdmin },
             process.env.JWT_SECRET,
-            { expiresIn: "5m" }
+            { expiresIn: "15m" }
         );
 
         // Loại bỏ password khỏi kết quả trả về
@@ -101,6 +101,63 @@ export const signout = (req, res) => {
         .status(200)
         .json({ message: "Logged out successfully" });
 };
+// Thay đổi mật khẩu
+export const changePassword = async (req, res, next) => {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    // Validate input
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        return next(errorHandle(400, "All fields are required"));
+    }
+
+    if (newPassword !== confirmPassword) {
+        return next(errorHandle(400, "New password and confirm password do not match"));
+    }
+
+    try {
+        // Get the token from the cookies
+        const token = req.cookies.access_token;
+
+        if (!token) {
+            return res.status(401).json({ message: "Not authenticated" });
+        }
+
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Find the user by username (from the decoded token)
+        const user = await User.findOne({ username: decoded.username });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Check if the old password matches the current password in the database
+        const isMatch = bcryptjs.compareSync(oldPassword, user.password);
+
+        if (!isMatch) {
+            return next(errorHandle(400, "Old password is incorrect"));
+        }
+
+        // Hash the new password
+        const salt = await bcryptjs.genSalt(10);
+        const hashedPassword = await bcryptjs.hash(newPassword, salt);
+
+        // Update the user's password
+        user.password = hashedPassword;
+        await user.save();
+
+        // Respond with success message
+        res.status(200).json({ message: "Password changed successfully" });
+
+    } catch (error) {
+        next(errorHandle(403, "Token is invalid or expired"));
+    }
+};
+
+
+
+
 /*. Ưu điểm của JWT
 - Tính linh hoạt: Có thể lưu trữ thông tin người dùng mà không cần truy cập cơ sở dữ liệu mỗi lần yêu cầu.
 - Độc lập: Có thể được sử dụng bởi nhiều dịch vụ khác nhau.
