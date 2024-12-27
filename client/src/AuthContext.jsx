@@ -7,10 +7,10 @@ export const AuthProvider = ({ children }) => {
     const [userInfo, setUserInfo] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        console.log('userInfo:', userInfo);
-        console.log('isLoggedIn:', isLoggedIn);
-    }, [userInfo, isLoggedIn]); // Log mỗi khi chúng thay đổi
+    // useEffect(() => {
+    //     console.log('userInfo:', userInfo);
+    //     console.log('isLoggedIn:', isLoggedIn);
+    // }, [userInfo, isLoggedIn]); // Log mỗi khi chúng thay đổi
 
     return (
         <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, userInfo, setUserInfo, loading, setLoading }}>

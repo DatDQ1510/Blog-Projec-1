@@ -90,7 +90,10 @@ export const checkAuthStatus = async (req, res, next) => {
         // Giải mã token và kiểm tra
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        res.status(200).json({ message: "Authenticated", loggedIn: true, email: decoded.email, id: decoded.id, username: decoded.username });
+        res.status(200).json({
+            message: "Authenticated", loggedIn: true, email: decoded.email,
+            id: decoded.id, username: decoded.username, isAdmin: decoded.isAdmin
+        });
     } catch (error) {
         next(errorHandle(403, "Token is invalid or expired"));
     }

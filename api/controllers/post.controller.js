@@ -1,6 +1,6 @@
 import { errorHandle } from "../utils/error.js"
 import Post from "../models/post.model.js"
-import e from "express";
+
 export const create = async (req, res, next) => {
     console.log(req.user);
     if (!req.body.title || !req.body.content) {
@@ -18,7 +18,7 @@ export const create = async (req, res, next) => {
         res.status(201).json({ success: true, savePost })
     }
     catch (error) {
-        next(error)
+        next(errorHandle(500, error.message))
     }
     console.log("Create post");
 };
@@ -47,6 +47,81 @@ export const getposts = async (req, res, next) => {
         const lastMonthPosts = await Post.countDocuments({ createdAt: { $gte: oneMonthAgo } });
         res.status(200).json({ posts, totalPosts, lastMonthPosts });
     } catch (error) {
-        next(error)
+        next(errorHandle(500, error.message))
+    }
+}
+
+export const getPostBySlug = async (req, res, next) => {
+    const { slug } = req.params; // Lấy slug từ params
+
+    if (!slug) {
+        return res.status(400).json({ success: false, message: 'Slug is required' });
+    }
+
+    try {
+        const post = await Post.findOne({ slug });
+        if (!post) {
+            return res.status(404).json({ success: false, message: 'Post not found' });
+        }
+
+        res.status(200).json({ success: true, post });
+    } catch (error) {
+        next(error); // Truyền lỗi cho middleware xử lý lỗi
+    }
+};
+
+export const deletepost = async (req, res, next) => {
+
+    try {
+        await Post.findByIdAndDelete(req.params.postId);
+        res.status(200).json('The post has been deleted');
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updatepost = async (req, res, next) => {
+    try {
+        const updatedPost = await Post.findByIdAndUpdate(
+            req.params.postId,
+            {
+                $set: {
+                    title: req.body.title,
+                    content: req.body.content,
+                    category: req.body.category,
+                    image: req.body.image,
+                },
+            },
+            { new: true }
+        );
+        res.status(200).json(updatedPost);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getPostById = async (req, res, next) => {
+    try {
+        const { id } = req.params; // Lấy id từ params
+        const post = await Post.findById(id); // Tìm bài viết với id
+        if (!post) {
+            return res.status(404).json({ success: false, message: 'Post not found' });
+        }
+        res.status(200).json({ success: true, post });
+    } catch (error) {
+        next(error);
+    }
+};
+export const getPostDetail = async (req, res) => {
+    try {
+        const post = await Post.findOne({ slug: req.params.slug });
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        res.json({ post });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
     }
 }

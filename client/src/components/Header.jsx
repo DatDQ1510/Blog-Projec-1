@@ -130,6 +130,9 @@ export default function Header() {
         <Navbar.Link>
           <Link to="/about">About</Link>
         </Navbar.Link>
+        <Navbar.Link>
+          <Link to="/notice">Notice </Link>
+        </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
   );

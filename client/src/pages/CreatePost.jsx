@@ -14,7 +14,8 @@ export default function CreatePost() {
         e.preventDefault();
         try {
             console.log('Submitting form data:', formData);
-            const res = await fetch('/api/post/create', {
+
+            const res = await fetch('/api/post/getposts', {
                 method: 'POST',
                 body: JSON.stringify(formData),
                 headers: {
@@ -22,10 +23,16 @@ export default function CreatePost() {
                 },
             });
 
+            // Kiểm tra mã trạng thái HTTP
+            if (!res.ok) {
+                throw new Error(`Error: ${res.status}`);
+            }
+
             const data = await res.json();
+
             console.log('Response data:', data);
 
-            if (!res.ok || !data.success) {
+            if (!data.success) {
                 // Hiển thị lỗi từ API nếu có
                 setPublishError(data.message || 'Failed to publish post');
                 return;
@@ -34,16 +41,15 @@ export default function CreatePost() {
             // Reset lỗi nếu thành công
             setPublishError(null);
 
-            //Kiểm tra và điều hướng tới bài viết mới
-
+            // Kiểm tra và điều hướng tới bài viết mới
             navigate(`/post/${data.savePost.slug}`);
-
 
         } catch (error) {
             console.error('Error submitting post:', error);
-            setPublishError('Something went wrong');
+            setPublishError(error.message || 'Something went wrong');
         }
     };
+
 
     return (
         <div className='p-3 max-w-3xl mx-auto min-h-screen'>
