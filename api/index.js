@@ -9,7 +9,7 @@ dotenv.config();
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import postRoutes from "./routes/post.routes.js";
-
+import commentRoutes from "./routes/comment.routes.js";
 const corsOptions = {
     origin: 'http://localhost:5173',  // URL của frontend
     credentials: true,  // Cho phép gửi cookie
@@ -29,6 +29,8 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/api/post", postRoutes);
+
+app.use("/api/comment", commentRoutes);
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

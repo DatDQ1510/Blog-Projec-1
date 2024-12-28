@@ -14,6 +14,7 @@ import UpdatePost from "./components/UpdatePost";
 import PostDetail from "./pages/PostDetail";
 import { AuthContext } from './AuthContext';
 import { useContext, useEffect } from 'react';
+import Comment from "./components/Comment";
 import PrivateRoute from './components/PrivateRoute';
 import { Navigate } from 'react-router-dom';
 
@@ -76,6 +77,8 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/dashboard" element={<DashBoard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/comment" element={<Comment />} />
+
         <Route path="/create-post" element={<CreatePost />} />
         <Route path="/update-post/:slug" element={<UpdatePost />} />
         <Route path="/change-password" element={<ChangePassword />} />
