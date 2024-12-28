@@ -67,6 +67,7 @@ export default function App() {
   }
 
   return (
+    <>
     <BrowserRouter>
       <Header />
       <Routes>
@@ -97,5 +98,6 @@ export default function App() {
       </Routes>
       <Footer />
     </BrowserRouter>
+    </>
   );
 }
