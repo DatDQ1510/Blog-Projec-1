@@ -56,27 +56,38 @@ export const signin = async (req, res, next) => {
 
         // Tạo token JWT
         const token = jwt.sign(
-            { id: validUser._id, email: validUser.email, username: validUser.username, isAdmin: validUser.isAdmin },
+            {
+                id: validUser._id.toString(), // Chuyển `_id` thành `id` trong token
+                email: validUser.email,
+                username: validUser.username,
+                isAdmin: validUser.isAdmin,
+            },
             process.env.JWT_SECRET,
             { expiresIn: "15m" }
         );
 
-        // Loại bỏ password khỏi kết quả trả về
-        const { password: pass, ...user } = validUser._doc;
+        // Loại bỏ password khỏi kết quả trả về và đồng nhất dữ liệu
+        const { password: pass, _id, ...user } = validUser._doc;
+        const formattedUser = {
+            ...user,
+            id: _id.toString(), // Thêm trường `id` đồng nhất thay vì `_id`
+        };
 
         // Gửi token trong cookie
         res.cookie("access_token", token, {
             httpOnly: true, // Ngăn chặn JavaScript truy cập cookie
-            secure: false, // Chỉ gửi cookie qua HTTPS trong môi trường production
+            secure: process.env.NODE_ENV === "production", // Chỉ gửi cookie qua HTTPS trong môi trường production
             sameSite: "strict", // Ngăn chặn tấn công CSRF
         }).status(200).json({
             message: "Login successfully",
-            user, token
+            user: formattedUser, // Trả về user đã chuẩn hóa
+            token,
         });
     } catch (error) {
         next(error); // Xử lý lỗi bằng middleware
     }
 };
+
 // Kiểm tra trạng thái đăng nhập
 export const checkAuthStatus = async (req, res, next) => {
     try {

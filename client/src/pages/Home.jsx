@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../AuthContext';
 import { Link } from 'react-router-dom';
-
+import Comment from '../components/Comment';
 export default function Home() {
     const { loading, userInfo, isLoggedIn } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);
@@ -56,8 +56,9 @@ export default function Home() {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.map((post) => (
+
                         <div
-                            key={post.id}
+                            key={post.slug}
                             className="relative group hover:shadow-lg transition-shadow duration-300 border border-gray-200 rounded-lg overflow-hidden"
                         >
                             {/* Thumbnails */}
@@ -89,6 +90,7 @@ export default function Home() {
                     ))}
                 </div>
             )}
+            <Comment />
         </div>
     );
 }

@@ -1,19 +1,14 @@
 import express from 'express';
 import { verifyToken } from '../utils/verifyUser.js';
 import {
-    createComment,
-    getPostComments,
-    likeComment,
-    editComment,
-    deleteComment,
+    createCommentHandler, getCommentsByPostId,
+    deleteCommentHandler, contentEditCommentHandler, likeCommentHandler
 } from '../controllers/comment.controller.js';
-
 const router = express.Router();
 
-router.get('/getcomments/:postId', getPostComments); // Lấy comments của bài viết
-router.post('/newcomment', verifyToken, createComment); // Tạo comment mới
-router.put('/likecomment/:commentId', verifyToken, likeComment); // Like/Unlike comment
-router.put('/editcomment/:commentId', verifyToken, editComment); // Chỉnh sửa comment
-router.delete('/deletecomment/:commentId', verifyToken, deleteComment); // Xóa comment
-
+router.post('/create-comment', verifyToken, createCommentHandler);
+router.get('/get-comments-by-post-id/:postId', getCommentsByPostId);
+router.delete('/delete-comment/:commentId', deleteCommentHandler);
+router.patch('/edit-comment/:commentId', contentEditCommentHandler);
+router.patch('/edit-like-comment/:commentId', likeCommentHandler);
 export default router;

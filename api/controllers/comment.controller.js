@@ -1,137 +1,140 @@
 import Comment from '../models/comment.model.js';
-
-export const createComment = async (req, res, next) => {
+import mongoose from "mongoose";
+import User from '../models/user.model.js';
+export const createCommentHandler = async (req, res) => {
     try {
-        const { content, postId, userId } = req.body;
-
-        if (userId !== req.user.id) {
-            return next(
-                errorHandler(403, 'You are not allowed to create this comment')
-            );
+        const { data_comment } = req.body;
+        console.log(data_comment);
+        console.log(req.body);
+        // Kiểm tra nếu thiếu dữ liệu
+        if (!req.body) {
+            return res.status(400).json({ message: 'Thiếu thông tin cần thiết' });
         }
 
+        // Tạo bình luận mới
         const newComment = new Comment({
-            content,
-            postId,
-            userId,
+            content: req.body.content,
+            postId: req.body.postId,
+            userId: req.body.userId,
+            likes: [],
+            numberOfLikes: 0,
         });
-        await newComment.save();
 
-        res.status(200).json(newComment);
-    } catch (error) {
-        next(error);
-    }
-};
+        // Lưu bình luận vào cơ sở dữ liệu
+        const savedComment = await newComment.save();
 
-export const getPostComments = async (req, res, next) => {
-    try {
-        const comments = await Comment.find({ postId: req.params.postId }).sort({
-            createdAt: -1,
+        // Trả về kết quả thành công
+        res.status(201).json({
+            message: 'Bình luận được tạo thành công',
+            comment: savedComment,
         });
-        res.status(200).json(comments);
+        console.log(savedComment);
     } catch (error) {
-        next(error);
+        // Xử lý lỗi và trả về thông tin chi tiết hơn
+        console.error("Error occurred while creating comment:", error);
+        res.status(500).json({ message: 'Đã xảy ra lỗi', error: error.message });
     }
 };
 
-export const likeComment = async (req, res, next) => {
-    try {
-        const comment = await Comment.findById(req.params.commentId);
-        if (!comment) {
-            return next(errorHandler(404, 'Comment not found'));
-        }
-        const userIndex = comment.likes.indexOf(req.user.id);
-        if (userIndex === -1) {
-            comment.numberOfLikes += 1;
-            comment.likes.push(req.user.id);
-        } else {
-            comment.numberOfLikes -= 1;
-            comment.likes.splice(userIndex, 1);
-        }
-        await comment.save();
-        res.status(200).json(comment);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const editComment = async (req, res, next) => {
-    try {
-        const comment = await Comment.findById(req.params.commentId);
-        if (!comment) {
-            return next(errorHandler(404, 'Comment not found'));
-        }
-        if (comment.userId !== req.user.id && !req.user.isAdmin) {
-            return next(
-                errorHandler(403, 'You are not allowed to edit this comment')
-            );
-        }
-
-        const editedComment = await Comment.findByIdAndUpdate(
-            req.params.commentId,
-            {
-                content: req.body.content,
-            },
-            { new: true }
-        );
-        res.status(200).json(editedComment);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const deleteComment = async (req, res, next) => {
-    try {
-        const comment = await Comment.findById(req.params.commentId);
-        if (!comment) {
-            return next(errorHandler(404, 'Comment not found'));
-        }
-        if (comment.userId !== req.user.id && !req.user.isAdmin) {
-            return next(
-                errorHandler(403, 'You are not allowed to delete this comment')
-            );
-        }
-        await Comment.findByIdAndDelete(req.params.commentId);
-        res.status(200).json('Comment has been deleted');
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const getcomments = async (req, res, next) => {
-    if (!req.user.isAdmin)
-        return next(errorHandler(403, 'You are not allowed to get all comments'));
-    try {
-        const startIndex = parseInt(req.query.startIndex) || 0;
-        const limit = parseInt(req.query.limit) || 9;
-        const sortDirection = req.query.sort === 'desc' ? -1 : 1;
-        const comments = await Comment.find()
-            .sort({ createdAt: sortDirection })
-            .skip(startIndex)
-            .limit(limit);
-        const totalComments = await Comment.countDocuments();
-        const now = new Date();
-        const oneMonthAgo = new Date(
-            now.getFullYear(),
-            now.getMonth() - 1,
-            now.getDate()
-        );
-        const lastMonthComments = await Comment.countDocuments({
-            createdAt: { $gte: oneMonthAgo },
-        });
-        res.status(200).json({ comments, totalComments, lastMonthComments });
-    } catch (error) {
-        next(error);
-    }
-};
 export const getCommentsByPostId = async (req, res) => {
-    const { postId } = req.params;
-
     try {
-        const comments = await Comment.find({ postId });
-        res.status(200).json(comments);
+        let { postId } = req.params;
+        // Loại bỏ dấu ":" ở đầu postId nếu có
+        if (postId.startsWith(':')) {
+            postId = postId.substring(1);
+        }
+        const comments = await Comment.find({ postId }).sort({ createdAt: -1 });
+
+        const commentsWithUsernames = await Promise.all(
+            comments.map(async (comment) => {
+                const user = await User.findById(comment.userId);
+                return {
+                    ...comment.toObject(), // Chuyển comment thành object plain (plain object)
+                    username: user.username, // Thêm username vào comment
+                };
+            })
+        );
+
+        res.status(200).json(commentsWithUsernames);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to fetch comments' });
+        console.error("Error occurred while fetching comments:", error);
+        res.status(500).json({
+            message: 'An error occurred while retrieving comments.',
+            error: error.message,
+        });
     }
 };
+
+
+export const deleteCommentHandler = async (req, res) => {
+    try {
+        let { commentId } = req.params;
+        // Loại bỏ dấu ":" ở đầu postId nếu có
+        if (commentId.startsWith(':')) {
+            commentId = commentId.substring(1);
+        }
+        // Convert string ID to ObjectId
+        if (!mongoose.Types.ObjectId.isValid(commentId)) {
+            return res.status(400).json({ error: "Invalid ObjectId" });
+        }
+
+        const deletedComment = await Comment.findByIdAndDelete(commentId);
+
+        if (!deletedComment) {
+            return res.status(404).json({ error: "Comment not found" });
+        }
+
+        res.status(200).json({ message: "Comment deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting comment:", error);
+        res.status(500).json({ message: "An error occurred while deleting comment.", error: error.message });
+    }
+}
+export const contentEditCommentHandler = async (req, res) => {
+    try {
+        let { commentId } = req.params;
+        // Loại bỏ dấu ":" ở đầu postId nếu có
+        if (commentId.startsWith(':')) {
+            commentId = commentId.substring(1);
+        }
+        // Convert string ID to ObjectId
+        if (!mongoose.Types.ObjectId.isValid(commentId)) {
+            return res.status(400).json({ error: "Invalid ObjectId" });
+        }
+
+        const editedComment = await Comment.findByIdAndUpdate(commentId, { content: req.body.content }, { new: true });
+
+        if (!editedComment) {
+            return res.status(404).json({ error: "Comment not found" });
+        }
+
+        res.status(200).json({ message: "Comment edited successfully", comment: editedComment });
+    } catch (error) {
+        console.error("Error editing comment:", error);
+        res.status(500).json({ message: "An error occurred while editing comment.", error: error.message });
+    }
+}
+export const likeCommentHandler = async (req, res) => {
+    try {
+        let { commentId } = req.params;
+        // Loại bỏ dấu ":" ở đầu postId nếu có
+        if (commentId.startsWith(':')) {
+            commentId = commentId.substring(1);
+        }
+        // Convert string ID to ObjectId
+        if (!mongoose.Types.ObjectId.isValid(commentId)) {
+            return res.status(400).json({ error: "Invalid ObjectId" });
+        }
+
+        const editedLikeComment = await Comment.findByIdAndUpdate(commentId, { likes: req.body.likes }, { new: true });
+
+        if (!editedLikeComment) {
+            return res.status(404).json({ error: "Comment not found" });
+        }
+
+        res.status(200).json({ message: "Comment edited successfully", comment: editedLikeComment });
+    } catch (error) {
+        console.error("Error editing comment:", error);
+        res.status(500).json({ message: "An error occurred while editing comment.", error: error.message });
+    }
+}

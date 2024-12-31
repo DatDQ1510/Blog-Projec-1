@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, Textarea, Button } from 'flowbite-react'; // Import Flowbite React
+import { useParams } from 'react-router-dom'; // Để lấy slug từ URL
+import { Card } from 'flowbite-react';
+import Comment from '../components/Comment'; // Import Comment component
 
 export default function PostDetail() {
-    const { slug } = useParams();
+    const { slug } = useParams(); // Lấy slug từ URL params
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,9 +16,9 @@ export default function PostDetail() {
             try {
                 const res = await fetch(`/api/post/getpostbyslug/${slug}`);
                 const data = await res.json();
-
                 if (res.ok) {
                     setPost(data.post);
+
                     setComments(data.post.comments || []);
                 } else {
                     setError(data.message || 'Failed to fetch post');
@@ -31,8 +32,8 @@ export default function PostDetail() {
         };
 
         fetchPost();
-    }, [slug]);
-
+    }, [slug]); // Dùng slug làm dependency
+   
     const handleCommentSubmit = async () => {
         if (!comment.trim()) return;
 
@@ -66,61 +67,34 @@ export default function PostDetail() {
     }
 
     return (
-        <div className="container mx-auto py-8">
-            {/* Post Content */}
-            <Card className="mx-auto max-w-3xl">
-                <h1 className="text-3xl font-bold mb-4 text-center">{post.title}</h1>
-                <div className="text-gray-500 mb-4 text-center">
-                    <p>Category: {post.category}</p>
-                    <p>Published on: {new Date(post.createdAt).toLocaleDateString()}</p>
-                </div>
-                {post.image && (
-                    <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-full h-auto object-cover mb-6 rounded-lg"
-                    />
-                )}
-                <div dangerouslySetInnerHTML={{ __html: post.content }} />
-            </Card>
-
-            {/* Comments Section */}
-            <div className="mt-12">
-                <h2 className="text-2xl font-bold text-center mb-6">Comments</h2>
-                <div className="max-w-3xl mx-auto">
-                    {/* Comment List */}
-                    {comments.length > 0 ? (
-                        comments.map((comment, index) => (
-                            <Card
-                                key={index}
-                                className="mb-4 bg-gray-100 rounded-lg shadow-md"
-                            >
-                                <p>{comment.content}</p>
-                            </Card>
-                        ))
-                    ) : (
-                        <p className="text-center">No comments yet. Be the first to comment!</p>
-                    )}
-
-                    {/* Comment Form */}
-                    <Card className="mt-6 p-4">
-                        <Textarea
-                            className="mb-4"
-                            placeholder="Write your comment here..."
-                            rows={4}
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
+        <div className="min-h-screen flex flex-col p-6 bg-gray-50">
+            <div className="flex-grow">
+                <Card className="w-full bg-white shadow-xl rounded-lg p-6">
+                    <h1 className="text-3xl font-bold mb-4 text-center">{post.title}</h1>
+                    <div className="text-gray-500 mb-4 text-center">
+                        <p>Category: {post.category}</p>
+                        <p>Published on: {new Date(post.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    {post.image && (
+                        <img
+                            src={post.image}
+                            alt={post.title}
+                            className="max-w-[800px] mx-auto object-cover mb-6 rounded-lg"
                         />
-                        <Button
-                            className="w-full"
-                            onClick={handleCommentSubmit}
-                            color="blue"
-                        >
-                            Submit Comment
-                        </Button>
-                    </Card>
+                    )}
+                    <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                </Card>
+
+                {/* Comments Section */}
+                <div className="mt-6">
+                    <Comment postId={post._id} /> {/* Truyền postId vào Comment component */}
                 </div>
             </div>
+
+            {/* Footer */}
+            <footer className="mt-6 text-center text-gray-500">
+                &copy; 2024 Your Blog. All rights reserved.
+            </footer>
         </div>
     );
 }
