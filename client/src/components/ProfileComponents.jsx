@@ -59,7 +59,7 @@ export function ProfileComponents() {
 
 
                     {/* Profile */}
-                    <Link to='/dashboard?tab=profile'>
+                    <Link to='/profile'>
                         <Sidebar.Item
                             active={tab === 'profile'}
                             icon={HiUser}
@@ -73,7 +73,7 @@ export function ProfileComponents() {
 
                     {/* Posts (chỉ hiển thị với Admin) */}
                     {userInfo.isAdmin && (
-                        <Link to='/dashboard?tab=posts'>
+                        <Link to='/dash-post'>
                             <Sidebar.Item
                                 active={tab === 'posts'}
                                 icon={HiDocumentText}
@@ -87,7 +87,7 @@ export function ProfileComponents() {
                     {/* Users và Comments (chỉ hiển thị với Admin) */}
                     {userInfo.isAdmin && (
                         <>
-                            <Link to='/dashboard?tab=users'>
+                            <Link to='/dash-users'>
                                 <Sidebar.Item
                                     active={tab === 'users'}
                                     icon={HiOutlineUserGroup}
@@ -96,7 +96,7 @@ export function ProfileComponents() {
                                     Users
                                 </Sidebar.Item>
                             </Link>
-                            <Link to='/dashboard?tab=comments'>
+                            <Link to='/dash-comments'>
                                 <Sidebar.Item
                                     active={tab === 'comments'}
                                     icon={HiAnnotation}

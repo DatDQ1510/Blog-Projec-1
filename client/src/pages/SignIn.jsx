@@ -11,7 +11,7 @@ export default function SignUp() {
     const [errorMessages, setErrorMessages] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
     const navigate = useNavigate();
-
+ 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
     };
@@ -22,7 +22,7 @@ export default function SignUp() {
             return setErrorMessages('Please fill in all fields');
         }
 
-     
+
         try {
             setLoading(true);
             setErrorMessages(null);

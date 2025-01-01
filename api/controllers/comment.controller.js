@@ -151,21 +151,46 @@ export const totalCommentHandler = async (req, res) => {
     }
 }
 export const getTotalComment = async (req, res) => {
-    try{
-        const totalComment = await Comment.countDocuments();
-        const comments = await Comment.find().sort({createdAt: -1});
+    try {
+        // Lấy thông tin phân trang và sắp xếp từ query parameters
+        const startIndex = parseInt(req.query.startIndex) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const sortDirection = req.query.sort === 'asc' ? 1 : -1;
+
+        // Lấy danh sách comment theo phân trang và sắp xếp
+        const comments = await Comment.find()
+            .sort({ createdAt: sortDirection })
+            .skip(startIndex)
+            .limit(limit);
+
+    
+        // Đếm tổng số comment
+        const totalComments = await Comment.countDocuments();
+
+        // Tính số comment được tạo trong vòng 1 tháng qua
+        const now = new Date();
+        const oneMonthAgo = new Date(
+            now.getFullYear(),
+            now.getMonth() - 1,
+            now.getDate()
+        );
+        const lastMonthComments = await Comment.countDocuments({
+            createdAt: { $gte: oneMonthAgo },
+        });
+
+        // Tạo kết quả trả về
         const result = {
-            totalComment,
-            comments
-        }
+            totalComments,
+            lastMonthComments,
+            comments,
+        };
+
         res.status(200).json(result);
-    }
-    catch (error) {
-        console.error("Error occurred while fetching total comment:", error);
+    } catch (error) {
+        console.error("Error occurred while fetching comments:", error);
         res.status(500).json({
-            message: 'An error occurred while retrieving total comment.',
+            message: 'An error occurred while retrieving comments.',
             error: error.message,
         });
-    }   
-    
-}
+    }
+};

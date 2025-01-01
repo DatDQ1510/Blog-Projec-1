@@ -14,9 +14,7 @@ import UpdatePost from "./components/UpdatePost";
 import PostDetail from "./pages/PostDetail";
 import { AuthContext } from './AuthContext';
 import { useContext, useEffect } from 'react';
-import Comment from "./components/Comment";
-import PrivateRoute from './components/PrivateRoute';
-import { Navigate } from 'react-router-dom';
+import Comment, DashPost, DashComment, DashUsers from "./components/Comment";
 
 export default function App() {
   const { setIsLoggedIn, setUserInfo, setLoading, userInfo, loading } = useContext(AuthContext);
@@ -68,36 +66,33 @@ export default function App() {
 
   return (
     <>
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/notice" element={<Notice />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/dashboard" element={<DashBoard />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/comment" element={<Comment />} />
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/notice" element={<Notice />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/dashboard" element={<DashBoard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/comment" element={<Comment />} />
 
-        <Route path="/create-post" element={<CreatePost />} />
-        <Route path="/update-post/:slug" element={<UpdatePost />} />
-        <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/post/:slug" element={<PostDetail />} />
-        {/* Protected Route for Admin */}
-        <Route
-          path="/admin"
-          element={
-            userInfo?.isAdmin ? (
-              <DashBoard />
-            ) : (
-              <Navigate to="/sign-in" /> // Redirect to sign-in if not an admin
-            )
-          }
-        />
-      </Routes>
-      <Footer />
-    </BrowserRouter>
+          <Route path="/create-post" element={<CreatePost />} />
+          <Route path="/update-post/:slug" element={<UpdatePost />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/post/:slug" element={<PostDetail />} />
+          {/* Protected Route for Admin */}
+          {/* <Route element={<PrivateRoute />}>
+            <Route path="/admin-dashpost" element={<DashPost />} />
+          </Route> */}
+          {/* chưa fix bug được */}
+          <Route path="/admin-dashpost" element={<DashPost />} />
+          <Route path="/admin-dashcomment" element={<DashComment />} />
+          <Route path="/admin-dashusers" element={<DashUsers />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
     </>
   );
 }
