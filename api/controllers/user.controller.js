@@ -1,6 +1,8 @@
 // Import model
 import User from "../models/user.model.js";
 import mongoose from 'mongoose';
+import Post from '../models/post.model.js';
+import Comment from '../models/comment.model.js';
 // Controller logic
 export const test = (req, res) => {
     res.json({ message: 'Hello world! ' });
@@ -59,6 +61,25 @@ export const deleteUser = async (req, res, next) => {
             userId = userId.substring(1);
         }
         console.log(userId);
+        await Post.updateMany(
+            { userId },
+            {
+                $set: {
+                    userId: null, // Xóa liên kết với user
+                    username: 'Guest User', // Hoặc 'Deleted User'
+                },
+            }
+        );
+        await Comment.updateMany(
+            { userId },
+            {
+                $set: {
+                    userId: null, // Xóa liên kết với user
+                    authorName: 'Guest User', // Hoặc 'Deleted User'
+                },
+            }
+        );
+
         // Kiểm tra xem ID có hợp lệ không
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.status(400).json({ error: "Invalid ObjectId" });
