@@ -3,11 +3,11 @@ import { AuthContext } from '../AuthContext';
 import { Link } from 'react-router-dom';
 
 export default function Home() {
-    const { loading, userInfo, isLoggedIn } = useContext(AuthContext);
+    const { loading, userInfo, isLoggedIn, searchTerm } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
     const [isFetching, setIsFetching] = useState(false);
-
+    
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -18,9 +18,11 @@ export default function Home() {
         const fetchPosts = async () => {
             setIsFetching(true);
             setError(null);
-
+            
             try {
-                const res = await fetch(`/api/post/getposts?startIndex=${(currentPage - 1) * POSTS_PER_PAGE}&limit=${POSTS_PER_PAGE}`);
+                // Nếu searchTerm có giá trị, thêm vào URL query string
+                const searchQuery = searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : '';
+                const res = await fetch(`/api/post/getposts?startIndex=${(currentPage - 1) * POSTS_PER_PAGE}&limit=${POSTS_PER_PAGE}${searchQuery}`);
                 const data = await res.json();
 
                 if (res.ok) {
@@ -38,7 +40,8 @@ export default function Home() {
         };
 
         fetchPosts();
-    }, [currentPage]);
+    }, [currentPage, searchTerm]); // Cập nhật khi currentPage hoặc searchTerm thay đổi
+
 
     if (loading) {
         return <div>Loading...</div>;

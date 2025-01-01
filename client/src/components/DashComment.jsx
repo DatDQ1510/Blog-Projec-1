@@ -82,7 +82,8 @@ export default function DashComment() {
 
   return (
     <div className="container mx-auto py-8">
-           <h2 className="text-lg mb-12 text-center text-red-700">List Comments</h2>
+
+      <h2 className="text-lg mb-12 text-center text-red-700">List Comments</h2>
 
       {/* Display loading, error, or no comments */}
       {loading ? (

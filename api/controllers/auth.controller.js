@@ -63,7 +63,7 @@ export const signin = async (req, res, next) => {
                 isAdmin: validUser.isAdmin,
             },
             process.env.JWT_SECRET,
-            { expiresIn: "15m" }
+            { expiresIn: "1h" }
         );
 
         // Loại bỏ password khỏi kết quả trả về và đồng nhất dữ liệu

@@ -5,9 +5,14 @@ import { AiOutlineSearch, AiOutlineMoon, AiOutlineSun } from 'react-icons/ai';
 import { AuthContext } from '../AuthContext';
 
 export default function Header() {
-  const { isLoggedIn, setIsLoggedIn, setUserInfo } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, setUserInfo, setSearchTerm } = useContext(AuthContext);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const searchValue = e.target.elements.searchInput.value; // Lấy giá trị từ input
+    setSearchTerm(searchValue);
+    // e.target.elements.searchInput.value = ''; // Xóa giá trị input
+  };
   // Toggle dark mode
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -69,10 +74,11 @@ export default function Header() {
       </Link>
 
       {/* Search Bar */}
-      <form>
+      <form onSubmit={handleSearch}>
         <TextInput
           type="text"
           placeholder="Search..."
+          name="searchInput"
           rightIcon={AiOutlineSearch}
           className="hidden lg:inline"
         />
