@@ -1,164 +1,149 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../AuthContext';
 import { Table, Button, Pagination } from 'flowbite-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 export default function DashUser() {
   const { userInfo } = useContext(AuthContext);
-  const [userPosts, setUserPosts] = useState([]);
+  const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // Add error state
+  const [error, setError] = useState(null);
   const postsPerPage = 5;
   const navigate = useNavigate();
 
+  // Fetch users from the server
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchUsers = async () => {
       if (!userInfo || !userInfo.id) return;
 
       setLoading(true);
       setError(null);
 
       try {
-        const url = userInfo.isAdmin
-          ? '/api/post/getposts'
-          : `/api/post/getposts?userId=${userInfo.id}`;
-        const res = await fetch(url, {
+        const res = await fetch('/api/user/users', {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
         });
 
         const data = await res.json();
+        console.log(data);
         if (res.ok) {
-          setUserPosts(data.posts || []);
+          setUsers(data.users || []);
         } else {
-          setError(data.message || 'Failed to fetch posts.');
+          setError(data.message || 'Failed to fetch users.');
         }
       } catch (error) {
-        setError('An error occurred while fetching posts.');
+        setError('An error occurred while fetching users.');
         console.error('Fetch error:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts();
+    fetchUsers();
   }, [userInfo]);
 
-  const handleDelete = async (postId) => {
-    if (window.confirm('Bạn có chắc muốn xóa bài viết này?')) {
+  // Handle user deletion
+  const handleDelete = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const res = await fetch(`/api/post/deletepost/${postId}/${userInfo.id}`, {
+        const res = await fetch(`/api/user/delete-user/${userId}`, {
           method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
         });
 
         if (res.ok) {
-          setUserPosts((prevPosts) =>
-            prevPosts.filter((post) => post._id !== postId)
-          );
-          alert('Bài viết đã được xóa thành công');
+          setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+          alert('User has been successfully deleted.');
         } else {
           const data = await res.json();
-          alert(data.message || 'Failed to delete post');
+          alert(data.message || 'Failed to delete user.');
         }
       } catch (error) {
-        alert('Có lỗi xảy ra trong quá trình xóa bài viết');
+        alert('An error occurred while deleting the user.');
         console.error('Delete error:', error);
       }
     }
   };
 
-  const handleUpdate = (slug) => {
-    navigate(`/update-post/${slug}`);
-  };
-
+  // Pagination logic
   const startIndex = (currentPage - 1) * postsPerPage;
-  const currentPosts = userPosts.slice(startIndex, startIndex + postsPerPage);
+  const currentUsers = users.slice(startIndex, startIndex + postsPerPage);
+  const totalPages = Math.ceil(users.length / postsPerPage);
 
+  // Handle no user info
   if (!userInfo) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Đang tải thông tin người dùng...</p>
+        <p className="text-gray-500">Loading user information...</p>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-      <h2 className="text-lg mb-12 text-center text-red-700">My list posts</h2>
-
+           <h2 className="text-lg mb-12 text-center text-red-700">List Users</h2>
+      {/* Display loading, error, or no users */}
       {loading ? (
-        <p className="text-center text-gray-500">Loading posts...</p>
+        <p className="text-center text-gray-500">Loading users...</p>
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
-      ) : userPosts.length === 0 ? (
-        <p className="text-center text-gray-500">No posts found.</p>
+      ) : users.length === 0 ? (
+        <p className="text-center text-gray-500">No users found.</p>
       ) : (
         <>
-          {/* Hiển thị số lượng bài viết */}
+          {/* Total user count */}
           <div className="mb-12 text-center">
-            <p className="text-lg font-semibold">Total Posts: {userPosts.length}</p>
+            <p className="text-lg font-semibold">Total Users: {users.length}</p>
           </div>
 
-          <Table hoverable={true}>
+          {/* User table */}
+          <Table hoverable={true} className="shadow-md">
             <Table.Head>
-              <Table.HeadCell>Image</Table.HeadCell>
-              <Table.HeadCell>Title</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>
-              <Table.HeadCell>Date</Table.HeadCell>
+            <Table.HeadCell> Updated Date</Table.HeadCell>
+              <Table.HeadCell>Username</Table.HeadCell>
+              <Table.HeadCell>Email</Table.HeadCell>
+              
+              <Table.HeadCell>Admin</Table.HeadCell>
               <Table.HeadCell>Action</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
-              {currentPosts.map((post) => (
-                <Table.Row key={post.slug} className="bg-white">
+              {currentUsers.map((user) => (
+                <Table.Row key={user._id} className="bg-white">
+                  <Table.Cell className="text-gray-600">
+                    {new Date(user.updatedAt).toLocaleDateString()}
+                  </Table.Cell>
+                  <Table.Cell className="text-pink-400">{user.username}</Table.Cell>
+                  <Table.Cell className="text-blue-600">{user.email}</Table.Cell>
+                  
                   <Table.Cell>
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-20 h-14 object-cover rounded-md"
-                    />
+                    {user.isAdmin ? (
+                      <FaCheck className="text-green-500" />
+                    ) : (
+                      <FaTimes className="text-red-500" />
+                    )}
                   </Table.Cell>
                   <Table.Cell>
-                    <Link
-                      to={`/post/${post.slug}`}
-                      className="text-blue-600 hover:underline"
+                    <Button
+                      className="bg-red-500 hover:bg-red-700 text-white"
+                      onClick={() => handleDelete(user._id)}
                     >
-                      {post.title}
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
-                  <Table.Cell>{post.updatedAt}</Table.Cell>
-                  <Table.Cell>
-                    <div className="flex space-x-2">
-                      <Button
-                        className="bg-blue-500 hover:bg-blue-700"
-                        onClick={() => handleUpdate(post.slug)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        className="bg-red-500 hover:bg-red-700"
-                        onClick={() => handleDelete(post._id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
+                      Delete
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>
           </Table>
+
+          {/* Pagination */}
           <div className="mt-4 flex justify-end">
             <Pagination
               currentPage={currentPage}
-              totalPages={Math.ceil(userPosts.length / postsPerPage)}
-              onPageChange={(page) => setCurrentPage(page)}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
             />
           </div>
         </>

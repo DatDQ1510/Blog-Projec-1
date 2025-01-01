@@ -1,11 +1,36 @@
 import React, { useContext } from 'react';
 import { TextInput, Label, Button } from 'flowbite-react';
 import { AuthContext } from '../AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ProfileComponents } from '../components/ProfileComponents';
 
 export default function Profile() {
     const { userInfo } = useContext(AuthContext);
+    const userId = userInfo?.id;
+    const navigate = useNavigate();
+
+    const handleDeleteUser = async () => {
+        const confirmDelete = window.confirm('Are you sure you want to delete your account?');
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/user/delete-user/${userId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+                alert('User deleted successfully!');
+                navigate('/sign-up'); // Chuyển hướng sau khi xóa
+            } else {
+                const errorData = await response.json();
+                alert(`Error deleting user: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            alert('An unexpected error occurred.');
+        }
+    };
 
     // Kiểm tra nếu userInfo chưa có hoặc không hợp lệ
     if (!userInfo) {
@@ -59,12 +84,32 @@ export default function Profile() {
                         />
                     </div>
 
-                    <Button className="w-full mb-4" gradientDuoTone="purpleToBlue">
-                        <Link to="/change-password">Change Password</Link>
-                    </Button>
-                    <Button gradientDuoTone="purpleToPink" className="w-full" outline>
-                        <Link to="/create-my-post">Create Post</Link>
-                    </Button>
+                    {/* Nút Change Password */}
+                    <Link to="/change-password" className="block">
+                        <Button className="w-full mb-4" gradientDuoTone="purpleToBlue">
+                            Change Password
+                        </Button>
+                    </Link>
+
+                    {/* Nút Create Post */}
+                    <Link to="/create-my-post" className="block">
+                        <Button gradientDuoTone="purpleToPink" className="w-full mb-4" outline>
+                            Create Post
+                        </Button>
+                    </Link>
+
+                    {/* Nút Delete User */}
+                    {!userInfo.isAdmin && (
+                        <Button
+                            gradientDuoTone="redToYellow"
+                            className="w-full mb-4"
+                            outline
+                            onClick={handleDeleteUser}
+                        >
+                            Delete User
+                        </Button>
+                    )}
+                   
                 </form>
             </div>
         </div>

@@ -161,7 +161,7 @@ export const getTotalComment = async (req, res) => {
         const comments = await Comment.find()
             .sort({ createdAt: sortDirection })
             .skip(startIndex)
-            .limit(limit);
+           
 
     
         // Đếm tổng số comment

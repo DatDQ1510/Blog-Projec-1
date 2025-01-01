@@ -114,7 +114,9 @@ export function ProfileComponents() {
                                     Comments
                                 </Sidebar.Item>
                             </Link>
+                            
                         </>
+                        
                     )}
 
                     {/* Sign Out */}

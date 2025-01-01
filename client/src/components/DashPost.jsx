@@ -88,8 +88,7 @@ export default function DashPost() {
 
     return (
         <div className="container mx-auto py-8">
-            <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-            <h2 className="text-lg mb-12 text-center text-red-700">My list posts</h2>
+            <h2 className="text-lg mb-12 text-center text-red-700">List Posts</h2>
 
             {loading ? (
                 <p className="text-center text-gray-500">Loading posts...</p>
@@ -106,15 +105,17 @@ export default function DashPost() {
 
                     <Table hoverable={true}>
                         <Table.Head>
+                            <Table.HeadCell>Date</Table.HeadCell>
                             <Table.HeadCell>Image</Table.HeadCell>
                             <Table.HeadCell>Title</Table.HeadCell>
                             <Table.HeadCell>Category</Table.HeadCell>
-                            <Table.HeadCell>Date</Table.HeadCell>
+
                             <Table.HeadCell>Action</Table.HeadCell>
                         </Table.Head>
                         <Table.Body className="divide-y">
                             {currentPosts.map((post) => (
                                 <Table.Row key={post.slug} className="bg-white">
+                                    <Table.Cell>{new Date(post.updatedAt).toLocaleDateString()}</Table.Cell>
                                     <Table.Cell>
                                         <img
                                             src={post.image}
@@ -131,7 +132,7 @@ export default function DashPost() {
                                         </Link>
                                     </Table.Cell>
                                     <Table.Cell>{post.category}</Table.Cell>
-                                    <Table.Cell>{post.updatedAt}</Table.Cell>
+
                                     <Table.Cell>
                                         <div className="flex space-x-2">
 

@@ -1,21 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../AuthContext';
 import { Link } from 'react-router-dom';
-import Comment from '../components/Comment';
+
 export default function Home() {
     const { loading, userInfo, isLoggedIn } = useContext(AuthContext);
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
-    const [isFetching, setIsFetching] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
+
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const POSTS_PER_PAGE = 9; // Số bài viết trên mỗi trang
 
     useEffect(() => {
         const fetchPosts = async () => {
+            setIsFetching(true);
+            setError(null);
+
             try {
-                const res = await fetch('/api/post/getposts');
+                const res = await fetch(`/api/post/getposts?startIndex=${(currentPage - 1) * POSTS_PER_PAGE}&limit=${POSTS_PER_PAGE}`);
                 const data = await res.json();
 
                 if (res.ok) {
                     setPosts(data.posts);
+                    setTotalPages(Math.ceil(data.totalPosts / POSTS_PER_PAGE)); // Tính tổng số trang
                 } else {
                     setError(data.message || 'Failed to fetch posts');
                 }
@@ -28,7 +38,7 @@ export default function Home() {
         };
 
         fetchPosts();
-    }, []);
+    }, [currentPage]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -56,7 +66,6 @@ export default function Home() {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.map((post) => (
-
                         <div
                             key={post.slug}
                             className="relative group hover:shadow-lg transition-shadow duration-300 border border-gray-200 rounded-lg overflow-hidden"
@@ -91,6 +100,26 @@ export default function Home() {
                 </div>
             )}
 
+            {/* Pagination */}
+            <div className="flex justify-center items-center mt-8 space-x-4">
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 rounded-lg ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'} transition-all duration-300`}
+                >
+                    Previous
+                </button>
+                <span className="text-lg font-semibold">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <button
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 rounded-lg ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700'} transition-all duration-300`}
+                >
+                    Next
+                </button>
+            </div>
         </div>
     );
 }

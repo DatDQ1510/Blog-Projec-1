@@ -1,164 +1,140 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../AuthContext';
 import { Table, Button, Pagination } from 'flowbite-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashComment() {
   const { userInfo } = useContext(AuthContext);
-  const [userPosts, setUserPosts] = useState([]);
+  const [comments, setComments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // Add error state
+  const [error, setError] = useState(null);
   const postsPerPage = 5;
-  const navigate = useNavigate();
 
+  // Fetch comments from the server
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchComments = async () => {
       if (!userInfo || !userInfo.id) return;
 
       setLoading(true);
       setError(null);
 
       try {
-        const url = userInfo.isAdmin
-          ? '/api/post/getposts'
-          : `/api/post/getposts?userId=${userInfo.id}`;
-        const res = await fetch(url, {
+        const res = await fetch('/api/comment/get-total-comment', {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
         });
 
         const data = await res.json();
+        console.log(data);
         if (res.ok) {
-          setUserPosts(data.posts || []);
+          setComments(data.comments || []);
         } else {
-          setError(data.message || 'Failed to fetch posts.');
+          setError(data.message || 'Failed to fetch comments.');
         }
       } catch (error) {
-        setError('An error occurred while fetching posts.');
+        setError('An error occurred while fetching comments.');
         console.error('Fetch error:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts();
+    fetchComments();
   }, [userInfo]);
 
-  const handleDelete = async (postId) => {
-    if (window.confirm('Bạn có chắc muốn xóa bài viết này?')) {
+  // Handle comment deletion
+  const handleDelete = async (commentId) => {
+    if (window.confirm('Are you sure you want to delete this comment?')) {
       try {
-        const res = await fetch(`/api/post/deletepost/${postId}/${userInfo.id}`, {
+        const res = await fetch(`/api/comment/delete-comment/${commentId}`, {
           method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
         });
 
         if (res.ok) {
-          setUserPosts((prevPosts) =>
-            prevPosts.filter((post) => post._id !== postId)
-          );
-          alert('Bài viết đã được xóa thành công');
+          setComments((prevComments) => prevComments.filter((comment) => comment._id !== commentId));
+          alert('Comment has been successfully deleted.');
         } else {
           const data = await res.json();
-          alert(data.message || 'Failed to delete post');
+          alert(data.message || 'Failed to delete comment.');
         }
       } catch (error) {
-        alert('Có lỗi xảy ra trong quá trình xóa bài viết');
+        alert('An error occurred while deleting the comment.');
         console.error('Delete error:', error);
       }
     }
   };
 
-  const handleUpdate = (slug) => {
-    navigate(`/update-post/${slug}`);
-  };
-
+  // Pagination logic
   const startIndex = (currentPage - 1) * postsPerPage;
-  const currentPosts = userPosts.slice(startIndex, startIndex + postsPerPage);
+  const currentComments = comments.slice(startIndex, startIndex + postsPerPage);
+  const totalPages = Math.ceil(comments.length / postsPerPage);
 
+  // Handle no user info
   if (!userInfo) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Đang tải thông tin người dùng...</p>
+        <p className="text-gray-500">Loading user information...</p>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-      <h2 className="text-lg mb-12 text-center text-red-700">My list posts</h2>
+           <h2 className="text-lg mb-12 text-center text-red-700">List Comments</h2>
 
+      {/* Display loading, error, or no comments */}
       {loading ? (
-        <p className="text-center text-gray-500">Loading posts...</p>
+        <p className="text-center text-gray-500">Loading comments...</p>
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
-      ) : userPosts.length === 0 ? (
-        <p className="text-center text-gray-500">No posts found.</p>
+      ) : comments.length === 0 ? (
+        <p className="text-center text-gray-500">No comments found.</p>
       ) : (
         <>
-          {/* Hiển thị số lượng bài viết */}
+          {/* Total comment count */}
           <div className="mb-12 text-center">
-            <p className="text-lg font-semibold">Total Posts: {userPosts.length}</p>
+            <p className="text-lg font-semibold">Total Comments: {comments.length}</p>
           </div>
 
-          <Table hoverable={true}>
+          {/* Comment table */}
+          <Table hoverable className='shadow-md'>
             <Table.Head>
-              <Table.HeadCell>Image</Table.HeadCell>
-              <Table.HeadCell>Title</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>
-              <Table.HeadCell>Date</Table.HeadCell>
+              <Table.HeadCell>Date Updated</Table.HeadCell>
+              <Table.HeadCell>Comment Content</Table.HeadCell>
+              <Table.HeadCell>Number of Likes</Table.HeadCell>
+              <Table.HeadCell>Post ID</Table.HeadCell>
+              <Table.HeadCell>User ID</Table.HeadCell>
               <Table.HeadCell>Action</Table.HeadCell>
             </Table.Head>
-            <Table.Body className="divide-y">
-              {currentPosts.map((post) => (
-                <Table.Row key={post.slug} className="bg-white">
+            <Table.Body className='divide-y'>
+              {currentComments.map((comment) => (
+                <Table.Row key={comment._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
+                  <Table.Cell>{new Date(comment.updatedAt).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell className="text-sky-500">{comment.content}</Table.Cell>
+                  <Table.Cell className="text-blue-700 ">{comment.likes.length}</Table.Cell>
+                  <Table.Cell className="text-gray-500">{comment.postId}</Table.Cell>
+                  <Table.Cell className="text-gray-500">{comment.userId}</Table.Cell>
                   <Table.Cell>
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="w-20 h-14 object-cover rounded-md"
-                    />
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link
-                      to={`/post/${post.slug}`}
-                      className="text-blue-600 hover:underline"
+                    <Button
+                      className="bg-red-500 hover:bg-red-700 text-white"
+                      onClick={() => handleDelete(comment._id)}
                     >
-                      {post.title}
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
-                  <Table.Cell>{post.updatedAt}</Table.Cell>
-                  <Table.Cell>
-                    <div className="flex space-x-2">
-                      <Button
-                        className="bg-blue-500 hover:bg-blue-700"
-                        onClick={() => handleUpdate(post.slug)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        className="bg-red-500 hover:bg-red-700"
-                        onClick={() => handleDelete(post._id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
+                      Delete
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>
           </Table>
+
+          {/* Pagination */}
           <div className="mt-4 flex justify-end">
             <Pagination
               currentPage={currentPage}
-              totalPages={Math.ceil(userPosts.length / postsPerPage)}
-              onPageChange={(page) => setCurrentPage(page)}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
             />
           </div>
         </>

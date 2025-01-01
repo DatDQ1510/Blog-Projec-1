@@ -13,5 +13,5 @@ router.delete('/delete-comment/:commentId', deleteCommentHandler);
 router.patch('/edit-comment/:commentId', contentEditCommentHandler);
 router.patch('/edit-like-comment/:commentId', likeCommentHandler);
 router.get('/total-comment', totalCommentHandler);
-router.get('/get-total-comment', getTotalComment);
+router.get('/get-total-comment', getTotalComment); 
 export default router;
