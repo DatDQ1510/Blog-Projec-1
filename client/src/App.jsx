@@ -14,8 +14,11 @@ import UpdatePost from "./components/UpdatePost";
 import PostDetail from "./pages/PostDetail";
 import { AuthContext } from './AuthContext';
 import { useContext, useEffect } from 'react';
-import Comment, DashPost, DashComment, DashUsers from "./components/Comment";
-
+import Comment from "./components/Comment";
+import DashPost from "./components/DashPost";
+import DashComment from "./components/DashComment";
+import DashUsers from "./components/DashUsers";
+import UserEdit from "./pages/UserEdit";
 export default function App() {
   const { setIsLoggedIn, setUserInfo, setLoading, userInfo, loading } = useContext(AuthContext);
 
@@ -78,7 +81,7 @@ export default function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/comment" element={<Comment />} />
 
-          <Route path="/create-post" element={<CreatePost />} />
+          <Route path="/create-my-post" element={<CreatePost />} />
           <Route path="/update-post/:slug" element={<UpdatePost />} />
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/post/:slug" element={<PostDetail />} />
@@ -90,6 +93,7 @@ export default function App() {
           <Route path="/admin-dashpost" element={<DashPost />} />
           <Route path="/admin-dashcomment" element={<DashComment />} />
           <Route path="/admin-dashusers" element={<DashUsers />} />
+          <Route path="/user-edit" element={<UserEdit />} />
         </Routes>
         <Footer />
       </BrowserRouter>

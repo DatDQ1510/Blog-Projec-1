@@ -46,8 +46,8 @@ export function ProfileComponents() {
         <Sidebar className='w-full md:w-56'>
             <Sidebar.Items>
                 <Sidebar.ItemGroup className='flex flex-col gap-1'>
-
-                    <Link to='/dashboard?tab=dash'>
+                {userInfo.isAdmin ? (
+                    <Link to='/dashboard'>
                         <Sidebar.Item
                             active={tab === 'dash'}
                             icon={HiChartPie}
@@ -55,8 +55,17 @@ export function ProfileComponents() {
                         >
                             Dashboard
                         </Sidebar.Item>
-                    </Link>
-
+                    </Link> ) : 
+                    (<Link to='/user-edit'>
+                        <Sidebar.Item
+                            active={tab === 'dash'}
+                            icon={HiChartPie}
+                            as='div'
+                        >
+                            List Posts
+                        </Sidebar.Item>
+                    </Link>)
+                }
 
                     {/* Profile */}
                     <Link to='/profile'>
@@ -73,7 +82,7 @@ export function ProfileComponents() {
 
                     {/* Posts (chỉ hiển thị với Admin) */}
                     {userInfo.isAdmin && (
-                        <Link to='/dash-post'>
+                        <Link to='/admin-dashpost'>
                             <Sidebar.Item
                                 active={tab === 'posts'}
                                 icon={HiDocumentText}
@@ -87,7 +96,7 @@ export function ProfileComponents() {
                     {/* Users và Comments (chỉ hiển thị với Admin) */}
                     {userInfo.isAdmin && (
                         <>
-                            <Link to='/dash-users'>
+                            <Link to='/admin-dashusers'>
                                 <Sidebar.Item
                                     active={tab === 'users'}
                                     icon={HiOutlineUserGroup}
@@ -96,7 +105,7 @@ export function ProfileComponents() {
                                     Users
                                 </Sidebar.Item>
                             </Link>
-                            <Link to='/dash-comments'>
+                            <Link to='/admin-dashcomments'>
                                 <Sidebar.Item
                                     active={tab === 'comments'}
                                     icon={HiAnnotation}

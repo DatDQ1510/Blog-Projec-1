@@ -63,7 +63,7 @@ export default function Profile() {
                         <Link to="/change-password">Change Password</Link>
                     </Button>
                     <Button gradientDuoTone="purpleToPink" className="w-full" outline>
-                        <Link to="/create-post">Create Post</Link>
+                        <Link to="/create-my-post">Create Post</Link>
                     </Button>
                 </form>
             </div>

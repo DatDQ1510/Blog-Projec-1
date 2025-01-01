@@ -3,7 +3,7 @@ import { AuthContext } from '../AuthContext';
 import { Table, Button, Pagination } from 'flowbite-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function DashPost() {
+export default function UserEdit() {
     const { userInfo } = useContext(AuthContext);
     const [userPosts, setUserPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -20,9 +20,7 @@ export default function DashPost() {
             setError(null);
 
             try {
-                const url = userInfo.isAdmin
-                    ? '/api/post/getposts'
-                    : `/api/post/getposts?userId=${userInfo.id}`;
+                const url = `/api/post/getposts?userId=${userInfo.id}`;
                 const res = await fetch(url, {
                     method: 'GET',
                     headers: {
@@ -73,7 +71,9 @@ export default function DashPost() {
         }
     };
 
-
+    const handleUpdate = (slug) => {
+        navigate(`/update-post/${slug}`);
+    };
 
     const startIndex = (currentPage - 1) * postsPerPage;
     const currentPosts = userPosts.slice(startIndex, startIndex + postsPerPage);
@@ -88,8 +88,7 @@ export default function DashPost() {
 
     return (
         <div className="container mx-auto py-8">
-            <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-            <h2 className="text-lg mb-12 text-center text-red-700">My list posts</h2>
+            <h1 className="text-2xl mb-12 text-center text-red-700">My list posts</h1>
 
             {loading ? (
                 <p className="text-center text-gray-500">Loading posts...</p>
@@ -134,7 +133,12 @@ export default function DashPost() {
                                     <Table.Cell>{post.updatedAt}</Table.Cell>
                                     <Table.Cell>
                                         <div className="flex space-x-2">
-
+                                            <Button
+                                                className="bg-blue-500 hover:bg-blue-700"
+                                                onClick={() => handleUpdate(post.slug)}
+                                            >
+                                                Edit
+                                            </Button>
                                             <Button
                                                 className="bg-red-500 hover:bg-red-700"
                                                 onClick={() => handleDelete(post._id)}

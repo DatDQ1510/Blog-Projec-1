@@ -15,7 +15,7 @@ export default function CreatePost() {
         try {
             console.log('Submitting form data:', formData);
 
-            const res = await fetch('/api/post/getposts', {
+            const res = await fetch('/api/post/create', {
                 method: 'POST',
                 body: JSON.stringify(formData),
                 headers: {
