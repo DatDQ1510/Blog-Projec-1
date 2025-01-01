@@ -138,3 +138,33 @@ export const likeCommentHandler = async (req, res) => {
         res.status(500).json({ message: "An error occurred while editing comment.", error: error.message });
     }
 }
+export const totalCommentHandler = async (req, res) => {
+    try {
+        const totalComment = await Comment.countDocuments();
+        res.status(200).json(totalComment);
+    } catch (error) {
+        console.error("Error occurred while fetching total comment:", error);
+        res.status(500).json({
+            message: 'An error occurred while retrieving total comment.',
+            error: error.message,
+        });
+    }
+}
+export const getTotalComment = async (req, res) => {
+    try{
+        const totalComment = await Comment.countDocuments();
+        const comments = await Comment.find().sort({createdAt: -1});
+        const result = {
+            totalComment,
+            comments
+        }
+        res.status(200).json(result);
+    }
+    catch (error) {
+        console.error("Error occurred while fetching total comment:", error);
+        res.status(500).json({
+            message: 'An error occurred while retrieving total comment.',
+            error: error.message,
+        });
+    }   
+}
