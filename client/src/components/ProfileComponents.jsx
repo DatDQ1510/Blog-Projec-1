@@ -82,7 +82,7 @@ export function ProfileComponents() {
 
                     {/* Posts (chỉ hiển thị với Admin) */}
                     {userInfo.isAdmin && (
-                        <Link to='/admin-dashpost'>
+                        <Link to='/admin-dashposts'>
                             <Sidebar.Item
                                 active={tab === 'posts'}
                                 icon={HiDocumentText}

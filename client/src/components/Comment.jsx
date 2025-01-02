@@ -80,17 +80,18 @@ export default function Comment({ postId }) {
     }
   };
 
+  
   const handleLikeToggle = async (index) => {
     const newComments = [...comments];
     const comment = newComments[index];
-
+   
     // Kiểm tra xem user đã like hay chưa
-    if (comment.likes.includes(userInfo._id)) {
+    if (comment.likes.includes(id_user)) {
       // Nếu đã like thì bỏ user khỏi danh sách
-      comment.likes = comment.likes.filter((id) => id !== userInfo._id);
+      comment.likes = comment.likes.filter((id) => id !== id_user);
     } else {
       // Nếu chưa like thì thêm user vào danh sách
-      comment.likes.push(userInfo._id);
+      comment.likes.push(id_user);
     }
 
     try {
@@ -232,7 +233,7 @@ export default function Comment({ postId }) {
             <hr className="my-4 border-t-2 border-gray-300" />
             <div className="flex items-center gap-6">
               <button
-                className={`flex items-center text-xl transition duration-300 ${comment.likes.includes(userInfo._id) ? "text-blue-500" : "text-gray-500"}`}
+                className={`flex items-center text-xl transition duration-300 ${comment.likes.includes(id_user) ? "text-blue-500" : "text-gray-500"}`}
                 onClick={() => handleLikeToggle(index)}
               >
                 <AiFillLike className="w-6 h-6 mr-2" />

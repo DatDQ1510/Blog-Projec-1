@@ -90,7 +90,7 @@ export default function App() {
             <Route path="/admin-dashpost" element={<DashPost />} />
           </Route> */}
           {/* chưa fix bug được */}
-          <Route path="/admin-dashpost" element={<DashPost />} />
+          <Route path="/admin-dashposts" element={<DashPost />} />
           <Route path="/admin-dashcomments" element={<DashComment />} />
           <Route path="/admin-dashusers" element={<DashUsers />} />
           <Route path="/user-edit" element={<UserEdit />} />

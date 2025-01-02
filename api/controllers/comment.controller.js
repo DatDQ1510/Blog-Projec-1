@@ -118,7 +118,7 @@ export const likeCommentHandler = async (req, res) => {
     try {
         let { commentId } = req.params;
         // Loại bỏ dấu ":" ở đầu postId nếu có
-        if (commentId.startsWith(':')) {
+        if (commentId.startsWith(':')) { 
             commentId = commentId.substring(1);
         }
         // Convert string ID to ObjectId

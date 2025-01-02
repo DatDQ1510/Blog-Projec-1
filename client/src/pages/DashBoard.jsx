@@ -16,35 +16,93 @@ export default function DashboardComp() {
 
   // Giả lập dữ liệu
   useEffect(() => {
-    // Dữ liệu giả lập cho users
-    const fakeUsers = [
-      { _id: 1, profilePicture: '/images/user1.jpg', username: 'user1' },
-      { _id: 2, profilePicture: '/images/user2.jpg', username: 'user2' },
-      { _id: 3, profilePicture: '/images/user3.jpg', username: 'user3' },
-    ];
-    setUsers(fakeUsers);
-    setTotalUsers(200);
-    setLastMonthUsers(15);
+    // Hàm để lấy dữ liệu users
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch('/api/user/users', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
 
-    // Dữ liệu giả lập cho posts
-    const fakePosts = [
-      { _id: 1, image: '/images/post1.jpg', title: 'Post 1', category: 'Tech' },
-      { _id: 2, image: '/images/post2.jpg', title: 'Post 2', category: 'Health' },
-      { _id: 3, image: '/images/post3.jpg', title: 'Post 3', category: 'Lifestyle' },
-    ];
-    setPosts(fakePosts);
-    setTotalPosts(50);
-    setLastMonthPosts(10);
+        const data = await res.json();
 
-    // Dữ liệu giả lập cho comments
-    const fakeComments = [
-      { _id: 1, content: 'This is a great post!', numberOfLikes: 5 },
-      { _id: 2, content: 'I totally agree!', numberOfLikes: 3 },
-      { _id: 3, content: 'Very informative, thanks!', numberOfLikes: 7 },
-    ];
-    setComments(fakeComments);
-    setTotalComments(100);
-    setLastMonthComments(25);
+        if (res.ok) {
+          setTotalUsers(data.totalUsers || []);
+          setUsers(data.users || []);
+          setLastMonthUsers(data.lastMonthUsers || []);
+          console.log(data);
+        } else {
+          setError(data.message || 'Failed to fetch users.');
+          console.error('Error message:', data.message);
+        }
+      } catch (error) {
+        setError('An error occurred while fetching users.');
+        console.error('Fetch error:', error);
+      }
+    };
+
+    // Gọi hàm fetchUsers một lần
+    fetchUsers();
+  }, []);
+  useEffect(() => {
+    // Hàm để lấy dữ liệu comments
+    const fetchComments = async () => {
+      try {
+        const res = await fetch('/api/comment/get-total-comment', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          setTotalComments(data.totalComments || []);
+          setComments(data.comments || []);
+          setLastMonthComments(data.lastMonthComments || []);
+          console.log(data);
+        } else {
+          setError(data.message || 'Failed to fetch comments.');
+          console.error('Error message:', data.message);
+        }
+      } catch (error) {
+        setError('An error occurred while fetching comments.');
+        console.error('Fetch error:', error);
+      }
+    };
+
+    // Gọi hàm fetchComments một lần
+    fetchComments();
+  }, []);
+
+  useEffect(() => {
+    // Hàm để lấy dữ liệu posts
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch('/api/post/getposts', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        const data = await res.json();
+        console.log(data);
+
+        if (res.ok) {
+          setTotalPosts(data.totalPosts || []);
+          setPosts(data.posts || []);
+          setLastMonthPosts(data.lastMonthPosts || []);
+          console.log(data);
+        } else {
+          setError(data.message || 'Failed to fetch posts.');
+          console.error('Error message:', data.message);
+        }
+      } catch (error) {
+        setError('An error occurred while fetching posts.');
+        console.error('Fetch error:', error);
+      }
+    };
+
+    // Gọi hàm fetchPosts một lần
+    fetchPosts();
   }, []);
 
   return (
@@ -111,21 +169,20 @@ export default function DashboardComp() {
         <div className='flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800'>
           <div className='flex justify-between p-3 text-sm font-semibold'>
             <h1 className='text-center p-2'>Recent users</h1>
-            <Button outline gradientDuoTone='purpleToPink'>
-              <Link to={'/dashboard?tab=users'}>See all</Link>
-            </Button>
+
+            <Link to={'/admin-dashusers'}>
+              <Button outline gradientDuoTone='purpleToPink'>See all</Button>
+            </Link>
+
           </div>
           <Table hoverable>
             <Table.Head>
-              <Table.HeadCell>User image</Table.HeadCell>
+
               <Table.HeadCell>Username</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
-              {users.map((user) => (
+              {users.slice(0, 4).map((user) => (
                 <Table.Row key={user._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
-                  <Table.Cell>
-                    <img src={user.profilePicture} alt='user' className='w-10 h-10 rounded-full bg-gray-500' />
-                  </Table.Cell>
                   <Table.Cell>{user.username}</Table.Cell>
                 </Table.Row>
               ))}
@@ -137,9 +194,10 @@ export default function DashboardComp() {
         <div className='flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800'>
           <div className='flex justify-between p-3 text-sm font-semibold'>
             <h1 className='text-center p-2'>Recent comments</h1>
-            <Button outline gradientDuoTone='purpleToPink'>
-              <Link to={'/dashboard?tab=comments'}>See all</Link>
-            </Button>
+            <Link to={'/admin-dashcomments'}> <Button outline gradientDuoTone='purpleToPink'>
+              See all
+            </Button></Link>
+
           </div>
           <Table hoverable>
             <Table.Head>
@@ -147,12 +205,12 @@ export default function DashboardComp() {
               <Table.HeadCell>Likes</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
-              {comments.map((comment) => (
+              {comments.slice(0,4).map((comment) => (
                 <Table.Row key={comment._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                   <Table.Cell className='w-96'>
                     <p className='line-clamp-2'>{comment.content}</p>
                   </Table.Cell>
-                  <Table.Cell>{comment.numberOfLikes}</Table.Cell>
+                  <Table.Cell>{comment.likes.length}</Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>
@@ -163,9 +221,10 @@ export default function DashboardComp() {
         <div className='flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800'>
           <div className='flex justify-between p-3 text-sm font-semibold'>
             <h1 className='text-center p-2'>Recent posts</h1>
-            <Button outline gradientDuoTone='purpleToPink'>
-              <Link to={'/dashboard?tab=posts'}>See all</Link>
-            </Button>
+            <Link to={'/admin-dashposts'}> <Button outline gradientDuoTone='purpleToPink'>
+            See all
+            </Button></Link>
+           
           </div>
           <Table hoverable>
             <Table.Head>
@@ -174,10 +233,10 @@ export default function DashboardComp() {
               <Table.HeadCell>Category</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
-              {posts.map((post) => (
+              {posts.slice(0,4).map((post) => (
                 <Table.Row key={post._id} className='bg-white dark:border-gray-700 dark:bg-gray-800'>
                   <Table.Cell>
-                    <img src={post.image} alt='post' className='w-14 h-10 rounded-md bg-gray-500' />
+                    <img src={post.image} alt='post' className='w-10 h-10 rounded-md bg-gray-500' />
                   </Table.Cell>
                   <Table.Cell>{post.title}</Table.Cell>
                   <Table.Cell>{post.category}</Table.Cell>
