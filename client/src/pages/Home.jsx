@@ -12,7 +12,7 @@ export default function Home() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
-    const POSTS_PER_PAGE = 9; // Số bài viết trên mỗi trang
+    const POSTS_PER_PAGE = 6; // Số bài viết trên mỗi trang
 
     useEffect(() => {
         const fetchPosts = async () => {

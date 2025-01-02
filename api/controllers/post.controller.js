@@ -42,7 +42,7 @@ export const getposts = async (req, res, next) => {
                     { category: { $regex: req.query.searchTerm, $options: 'i' } } // Tìm trong category
                 ]
             }),
-        }).sort({ createdAt: sortDirection }).skip(startIndex).limit(limit);
+        }).sort({ createdAt: sortDirection }).skip(startIndex);
 
         const totalPosts = await Post.countDocuments();
         const now = new Date();

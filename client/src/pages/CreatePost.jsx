@@ -80,21 +80,40 @@ export default function CreatePost() {
                     </Select>
                 </div>
                 <div
-                    className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'
+                    className='flex gap-6 items-center justify-between border-4 border-teal-500 border-dotted p-3'
                 >
-                    <FileInput
+                    {/* <FileInput
                         id='image'
                         accept='image/*'
                         onChange={(e) => setFile(e.target.files[0])}
-                    />
-                    <Button
-                        type='button'
-                        gradientDuoTone='purpleToBlue'
-                        size='sm'
-                        outline
-                    >
-                        Upload image
-                    </Button>
+                    /> */}
+                    <form onSubmit={handleSubmit} className="flex items-center gap-4">
+                        <TextInput
+                            id="imageAlt"
+                            placeholder="Image alt text"
+                            type="text"
+                            className="flex-grow w-96"
+                            onChange={(e) => setFormData({ ...formData, imageAlt: e.target.value })}
+                        />
+                        {/* <Button
+                            type="button"
+                            gradientDuoTone="purpleToBlue"
+                            size="sm"
+                            outline
+                            onClick={handleUploadImage} // Hàm xử lý tải lên
+                        >
+                            Upload image
+                        </Button> */}
+                        <Button
+                            type="submit" // Nút này dùng để gửi form
+                            gradientDuoTone="greenToBlue"
+                            size="sm"
+                            className="ml-2"
+                        >
+                            Submit
+                        </Button>
+                    </form>
+
                 </div>
                 <ReactQuill
                     theme='snow'
