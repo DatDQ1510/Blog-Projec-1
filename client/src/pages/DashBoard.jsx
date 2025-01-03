@@ -112,7 +112,7 @@ export default function DashboardComp() {
         <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md'>
           <div className='flex justify-between'>
             <div className=''>
-              <h3 className='text-gray-500 text-md uppercase'>Total Users</h3>
+              <h3 className='text-gray-500 text-md uppercase'>Tổng người dùng</h3>
               <p className='text-2xl'>{totalUsers}</p>
             </div>
             <HiOutlineUserGroup className='bg-teal-600 text-white rounded-full text-5xl p-3 shadow-lg' />
@@ -122,7 +122,7 @@ export default function DashboardComp() {
               <HiArrowNarrowUp />
               {lastMonthUsers}
             </span>
-            <div className='text-gray-500'>Last month</div>
+            <div className='text-gray-500'>1 tháng trước</div>
           </div>
         </div>
 
@@ -130,7 +130,7 @@ export default function DashboardComp() {
         <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md'>
           <div className='flex justify-between'>
             <div className=''>
-              <h3 className='text-gray-500 text-md uppercase'>Total Comments</h3>
+              <h3 className='text-gray-500 text-md uppercase'>Tổng bình luận</h3>
               <p className='text-2xl'>{totalComments}</p>
             </div>
             <HiAnnotation className='bg-indigo-600 text-white rounded-full text-5xl p-3 shadow-lg' />
@@ -140,7 +140,7 @@ export default function DashboardComp() {
               <HiArrowNarrowUp />
               {lastMonthComments}
             </span>
-            <div className='text-gray-500'>Last month</div>
+            <div className='text-gray-500'>1 tháng trước</div>
           </div>
         </div>
 
@@ -148,7 +148,7 @@ export default function DashboardComp() {
         <div className='flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md'>
           <div className='flex justify-between'>
             <div className=''>
-              <h3 className='text-gray-500 text-md uppercase'>Total Posts</h3>
+              <h3 className='text-gray-500 text-md uppercase'>Tổng bài viết</h3>
               <p className='text-2xl'>{totalPosts}</p>
             </div>
             <HiDocumentText className='bg-lime-600 text-white rounded-full text-5xl p-3 shadow-lg' />
@@ -158,7 +158,7 @@ export default function DashboardComp() {
               <HiArrowNarrowUp />
               {lastMonthPosts}
             </span>
-            <div className='text-gray-500'>Last month</div>
+            <div className='text-gray-500'>1 tháng trước</div>
           </div>
         </div>
       </div>
@@ -168,17 +168,17 @@ export default function DashboardComp() {
         {/* Recent users */}
         <div className='flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800'>
           <div className='flex justify-between p-3 text-sm font-semibold'>
-            <h1 className='text-center p-2'>Recent users</h1>
+            <h1 className='text-center p-2'>Người dùng gần đây</h1>
 
             <Link to={'/admin-dashusers'}>
-              <Button outline gradientDuoTone='purpleToPink'>See all</Button>
+              <Button outline gradientDuoTone='purpleToPink'>Xem tất cả</Button>
             </Link>
 
           </div>
           <Table hoverable>
             <Table.Head>
 
-              <Table.HeadCell>Username</Table.HeadCell>
+              <Table.HeadCell>Người dùng</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
               {users.slice(0, 4).map((user) => (
@@ -193,7 +193,7 @@ export default function DashboardComp() {
         {/* Recent comments */}
         <div className='flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800'>
           <div className='flex justify-between p-3 text-sm font-semibold'>
-            <h1 className='text-center p-2'>Recent comments</h1>
+            <h1 className='text-center p-2'>Bình luận gần đây</h1>
             <Link to={'/admin-dashcomments'}> <Button outline gradientDuoTone='purpleToPink'>
               See all
             </Button></Link>
@@ -201,7 +201,7 @@ export default function DashboardComp() {
           </div>
           <Table hoverable>
             <Table.Head>
-              <Table.HeadCell>Comment content</Table.HeadCell>
+              <Table.HeadCell>Nội dung bình luận</Table.HeadCell>
               <Table.HeadCell>Likes</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
@@ -220,7 +220,7 @@ export default function DashboardComp() {
         {/* Recent posts */}
         <div className='flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800'>
           <div className='flex justify-between p-3 text-sm font-semibold'>
-            <h1 className='text-center p-2'>Recent posts</h1>
+            <h1 className='text-center p-2'>Bài viết gần đây</h1>
             <Link to={'/admin-dashposts'}> <Button outline gradientDuoTone='purpleToPink'>
             See all
             </Button></Link>
@@ -228,9 +228,9 @@ export default function DashboardComp() {
           </div>
           <Table hoverable>
             <Table.Head>
-              <Table.HeadCell>Post image</Table.HeadCell>
-              <Table.HeadCell>Post Title</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>
+              <Table.HeadCell>Ảnh bài viết</Table.HeadCell>
+              <Table.HeadCell>Tiêu đề bài viết</Table.HeadCell>
+              <Table.HeadCell>Loại bài viết</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
               {posts.slice(0,4).map((post) => (

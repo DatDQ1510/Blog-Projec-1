@@ -83,7 +83,7 @@ export default function DashComment() {
   return (
     <div className="container mx-auto py-8">
 
-      <h2 className="text-lg mb-12 text-center text-red-700">List Comments</h2>
+      <h2 className="text-lg mb-12 text-center text-red-700">Danh sách bình luận</h2>
 
       {/* Display loading, error, or no comments */}
       {loading ? (
@@ -96,7 +96,7 @@ export default function DashComment() {
         <>
           {/* Total comment count */}
           <div className="mb-12 text-center">
-            <p className="text-lg font-semibold">Total Comments: {comments.length}</p>
+            <p className="text-lg font-semibold">Tổng bài viết: {comments.length}</p>
           </div>
 
           {/* Comment table */}
@@ -122,7 +122,7 @@ export default function DashComment() {
                       className="bg-red-500 hover:bg-red-700 text-white"
                       onClick={() => handleDelete(comment._id)}
                     >
-                      Delete
+                      Xóa
                     </Button>
                   </Table.Cell>
                 </Table.Row>

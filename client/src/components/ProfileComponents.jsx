@@ -53,7 +53,8 @@ export function ProfileComponents() {
                             icon={HiChartPie}
                             as='div'
                         >
-                            Dashboard
+                           Bảng điều khiển
+
                         </Sidebar.Item>
                     </Link> ) : 
                     (<Link to='/user-edit'>
@@ -62,7 +63,7 @@ export function ProfileComponents() {
                             icon={HiChartPie}
                             as='div'
                         >
-                            List Posts
+                            Danh sách bài viết
                         </Sidebar.Item>
                     </Link>)
                 }
@@ -88,7 +89,7 @@ export function ProfileComponents() {
                                 icon={HiDocumentText}
                                 as='div'
                             >
-                                Posts
+                                Các bài viết
                             </Sidebar.Item>
                         </Link>
                     )}
@@ -102,7 +103,7 @@ export function ProfileComponents() {
                                     icon={HiOutlineUserGroup}
                                     as='div'
                                 >
-                                    Users
+                                    Người dùng
                                 </Sidebar.Item>
                             </Link>
                             <Link to='/admin-dashcomments'>
@@ -111,7 +112,7 @@ export function ProfileComponents() {
                                     icon={HiAnnotation}
                                     as='div'
                                 >
-                                    Comments
+                                   Bình luận
                                 </Sidebar.Item>
                             </Link>
                             
@@ -124,7 +125,7 @@ export function ProfileComponents() {
                         icon={HiArrowSmRight}
                         className='cursor-pointer'
                         onClick={handleSignout}                     >
-                        Sign Out
+                        Đăng xuất
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
             </Sidebar.Items>

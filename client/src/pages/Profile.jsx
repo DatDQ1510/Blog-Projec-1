@@ -59,10 +59,10 @@ export default function Profile() {
             <div className="flex-1 flex items-center justify-center">
                 <form className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                     <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
-                        User Profile
+                        Hồ sơ người dùng
                     </h2>
                     <div className="mb-4">
-                        <Label htmlFor="name">Username</Label>
+                        <Label htmlFor="name">Tên tài khoản</Label>
                         <TextInput
                             id="name"
                             placeholder="Name"
@@ -87,14 +87,14 @@ export default function Profile() {
                     {/* Nút Change Password */}
                     <Link to="/change-password" className="block">
                         <Button className="w-full mb-4" gradientDuoTone="purpleToBlue">
-                            Change Password
+                            Thay đổi mật khẩu
                         </Button>
                     </Link>
 
                     {/* Nút Create Post */}
                     <Link to="/create-my-post" className="block">
                         <Button gradientDuoTone="purpleToPink" className="w-full mb-4" outline>
-                            Create Post
+                            Tạo bài viết
                         </Button>
                     </Link>
 
@@ -106,7 +106,7 @@ export default function Profile() {
                             outline
                             onClick={handleDeleteUser}
                         >
-                            Delete User
+                            Xóa người dùng
                         </Button>
                     )}
                    

@@ -88,7 +88,7 @@ export default function DashPost() {
 
     return (
         <div className="container mx-auto py-8">
-            <h2 className="text-lg mb-12 text-center text-red-700">List Posts</h2>
+            <h2 className="text-lg mb-12 text-center text-red-700">Danh sách bài viết</h2>
 
             {loading ? (
                 <p className="text-center text-gray-500">Loading posts...</p>
@@ -100,7 +100,7 @@ export default function DashPost() {
                 <>
                     {/* Hiển thị số lượng bài viết */}
                     <div className="mb-12 text-center">
-                        <p className="text-lg font-semibold">Total Posts: {userPosts.length}</p>
+                        <p className="text-lg font-semibold">Tổng bài viết: {userPosts.length}</p>
                     </div>
 
                     <Table hoverable={true}>

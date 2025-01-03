@@ -84,7 +84,7 @@ export default function DashUser() {
 
   return (
     <div className="container mx-auto py-8">
-           <h2 className="text-lg mb-12 text-center text-red-700">List Users</h2>
+           <h2 className="text-lg mb-12 text-center text-red-700">Danh sách người dùng</h2>
       {/* Display loading, error, or no users */}
       {loading ? (
         <p className="text-center text-gray-500">Loading users...</p>
@@ -96,7 +96,7 @@ export default function DashUser() {
         <>
           {/* Total user count */}
           <div className="mb-12 text-center">
-            <p className="text-lg font-semibold">Total Users: {users.length}</p>
+            <p className="text-lg font-semibold">Tổng người dùng: {users.length}</p>
           </div>
 
           {/* User table */}

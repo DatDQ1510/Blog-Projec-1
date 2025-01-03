@@ -103,11 +103,11 @@ export default function Header() {
         {isLoggedIn ? (
           <Dropdown label={<Avatar rounded />} inline>
             <Dropdown.Item>
-              <Link to="/profile">Profile</Link>
+              <Link to="/profile">Hồ sơ</Link>
             </Dropdown.Item>
             <Dropdown.Item>
               <Link to="/" onClick={handleSignout}>
-                Sign out
+               Đăng xuất
               </Link>
             </Dropdown.Item>
           </Dropdown>
@@ -115,12 +115,12 @@ export default function Header() {
           <>
             <Link to="/sign-up">
               <Button gradientDuoTone="purpleToBlue" outline>
-                Sign Up
+                Đăng kí
               </Button>
             </Link>
             <Link to="/sign-in">
               <Button gradientDuoTone="purpleToBlue" outline>
-                Sign In
+                Đăng nhập
               </Button>
             </Link>
           </>
@@ -131,13 +131,11 @@ export default function Header() {
       {/* Navbar Collapse (Links) */}
       <Navbar.Collapse>
         <Navbar.Link>
-          <Link to="/">Home</Link>
+          <Link to="/">Trang chủ</Link>
         </Navbar.Link>
+        
         <Navbar.Link>
-          <Link to="/about">About</Link>
-        </Navbar.Link>
-        <Navbar.Link>
-          <Link to="/notice">Notice </Link>
+          <Link to="/notice">Thông báo</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
